@@ -88,3 +88,4 @@ for name, coord in stationen.items():
 
 # Karte in Streamlit anzeigen
 st_data = st_folium(m, width=700, height=500)
+
