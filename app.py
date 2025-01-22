@@ -3,38 +3,12 @@ import pandas as pd
 import pdfplumber
 
 # Definition der 14 Teilstellen des Funktionsbereichs Pflege mit spezifischen Zimmeranforderungen
-pflege_teilstellen = [
-    {"Teilstelle": "2.01 Allgemeine Pflege", "Ausgewählt": False, "Räume": [
-        "Arztraum", "Dienstplatz", "Personalaufenthaltsräume", "Teeküche", "Medikamentenräume", "Waschräume",
-        "Arbeitsraum unrein", "Ver- und Entsorgung Wäsche", "Ver- und Entsorgung Abfall", "Ver- und Entsorgung Speisen",
-        "Ver- und Entsorgung Medikamente", "Bettenzimmer", "WC Personal", "WC Besucher", "Patientenaufenthaltsraum", "Technikraum"
-    ]},
-    {"Teilstelle": "2.02 Wöchnerinnen- und Neugeborenenpflege", "Ausgewählt": False, "Räume": [
-        "Pflege - Wöchnerinnen", "Pflege - Neugeborene"
-    ]},
-    {"Teilstelle": "2.03 Intensivmedizin", "Ausgewählt": False, "Räume": [
-        "Intensivtherapie", "Intensivüberwachung", "Stroke Unit", "Chest-Pain-Unit", "Schwerstbrandverletzte"
-    ]},
-    {"Teilstelle": "2.04 Dialyse", "Ausgewählt": False, "Räume": [
-        "Aktudialyse", "Chronische Dialyse"
-    ]},
-    {"Teilstelle": "2.05 Säuglings-, Kinder- und Jugendkrankenpflege", "Ausgewählt": False, "Räume": [
-        "Allgemeine Kinder- und Jugendkrankenpflege", "Säuglingskrankenpflege", "Kinderintensivpflege", "Neonatologie"
-    ]},
-    {"Teilstelle": "2.06 Isolationskrankenpflege", "Ausgewählt": False, "Räume": [
-        "Infektionskrankenpflege", "Umkehrisolation"
-    ]},
-    {"Teilstelle": "2.07 Pflege psychisch Kranker", "Ausgewählt": False, "Räume": [
-        "Allgemeine Psychiatrie", "Forensische Psychiatrie", "Gerontopsychatrie", "Psychosomatik", "Kinder- und Jugendpsychiatrie"
-    ]},
-    {"Teilstelle": "2.08 Pflege - Nuklearmedizin", "Ausgewählt": False, "Räume": []},
-    {"Teilstelle": "2.09 Aufnahmepflege", "Ausgewählt": False, "Räume": []},
-    {"Teilstelle": "2.10 Pflege - Geriatrie", "Ausgewählt": False, "Räume": []},
-    {"Teilstelle": "2.11 Tagesklinik", "Ausgewählt": False, "Räume": []},
-    {"Teilstelle": "2.12 Palliativmedizin", "Ausgewählt": False, "Räume": []},
-    {"Teilstelle": "2.13 Rehabilitation", "Ausgewählt": False, "Räume": []},
-    {"Teilstelle": "2.14 Komfortstation", "Ausgewählt": False, "Räume": []}
-]
+csv_url = "https://raw.githubusercontent.com/magdalenaruell/pflege-planung/main/Kopie von 250122_Excel-AnfordeungenDIN.xlsx - Funktionsbereiche.csv"
+
+df = pd.read_csv(csv_url)
+
+import streamlit as st
+st.write(df)
 
 # Szenarien-Beschreibungen
 szenarien = {
