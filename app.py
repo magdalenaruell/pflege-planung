@@ -55,6 +55,11 @@ selected_teilstellen = edited_df[edited_df["Ausgewählt"] == True]["Teilstelle"]
 # PDF-Upload oder Manuelle Eingabe
 st.header("📂 Lade einen PDF-Plan hoch oder gib die relevanten Daten manuell ein")
 pdf_file = st.file_uploader("Lade einen PDF-Plan mit Raumtypen und Größen hoch", type=["pdf"])
+
+# Option zum Fortfahren ohne Daten
+st.write("Falls kein PDF vorhanden ist und keine manuelle Eingabe erfolgen soll, kannst du ohne Daten fortfahren.")
+fortfahren = st.checkbox("Ohne Daten fortfahren")
+
 raumdaten = []
 if pdf_file:
     with pdfplumber.open(pdf_file) as pdf:
@@ -64,8 +69,8 @@ if pdf_file:
                 raumdaten.extend(text.split("\n"))
     st.write("Extrahierte Raumdaten:")
     st.write(raumdaten)
-else:
-    st.write("📌 Falls kein PDF vorhanden ist, gib die relevanten Daten manuell ein oder wähle 'Ohne Daten fortfahren'.")
+elif not fortfahren:
+    st.write("📌 Falls kein PDF vorhanden ist, gib die relevanten Daten manuell ein:")
     for teilstelle in selected_teilstellen:
         st.subheader(f"{teilstelle} - Manuelle Eingabe")
         for raum in next(t["Räume"] for t in pflege_teilstellen if t["Teilstelle"] == teilstelle):
@@ -76,17 +81,10 @@ st.header("📌 Wähle ein Szenario")
 scenario_choice = st.selectbox("Szenario auswählen", list(szenarien.keys()))
 st.write("**Beschreibung:**", szenarien[scenario_choice])
 
-# Auswahl der Teilstelle(n) für die Simulation
-if scenario_choice == "Szenario 2":
-    st.header("🏥 Wähle zwei Teilstellen zur Zusammenlegung")
-    teilstelle_choice = st.multiselect("Teilstellen auswählen", selected_teilstellen, max_selections=2)
-else:
-    st.header("🏥 Wähle eine Teilstelle für die Simulation")
-    teilstelle_choice = st.selectbox("Teilstelle auswählen", selected_teilstellen)
-
-# Simulationsergebnisse
+# Dynamische Analyse und Simulation
 st.header("🔍 Simulationsergebnisse")
-st.write("Analyse basierend auf Raum- und technischen Anforderungen...")
-for teilstelle in teilstelle_choice:
+for teilstelle in selected_teilstellen:
     st.subheader(f"Ergebnis für {teilstelle}")
-    st.write("(Detaillierte Simulationsergebnisse mit Gegenüberstellung der Anforderungen)")
+    st.write("Vergleich der Anforderungen der gewählten Teilstelle mit Szenario-Anforderungen...")
+    st.write("Detaillierte Lösungsvorschläge basierend auf Raumgrößen, Technik und Bedarf...")
+    st.write("Tabelle zur Gegenüberstellung der Anforderungen")
