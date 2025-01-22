@@ -8,43 +8,87 @@ pflege_teilstellen = [
     {
         "Teilstelle": "2.01 Allgemeine Pflege",
         "Räume": [
-            {"Name": "Arztraum", "mind. Fläche (m²)": "12", "Technik": "Basisdiagnostik", "Sanitär": "Nein"},
-            {"Name": "Dienstplatz", "mind. Fläche (m²)": "10", "Technik": "EDV-Anbindung", "Sanitär": "Nein"},
-            {"Name": "Personalaufenthaltsräume", "mind. Fläche (m²)": "15", "Technik": "Optional", "Sanitär": "Ja"},
-            {"Name": "Patientenzimmer (Einzel)", "mind. Fläche (m²)": "20", "Technik": "Klimatisierung, TV", "Sanitär": "Ja"}
-        ],
-        "mind. Raumbreite": "3m",
-        "mind. Türbreite": "1.26m",
-        "Fläche (m²)": "16-20",
-        "Technik": "Klimatisierung, Raumlufttechnik",
-        "Sanitär": "Bad an Bettenzimmer (WC, Waschbecken, Dusche)",
-        "Besonderheiten": "Barrierefreiheit, erhöhte Hygieneanforderungen"
+            {"Name": "Arztraum", "Raumgrößen": "mind. 12 m²", "Bedarf": "1 pro Station", "Lageanforderungen": "Zentral gelegen", "Sanitär": "Nein", "Bestimmte Raumeigenschaften": "Basisdiagnostik", "Technik": "EDV-Anbindung"},
+            {"Name": "Dienstplatz", "Raumgrößen": "mind. 10 m²", "Bedarf": "Pro Pflegebereich", "Lageanforderungen": "Nahe Patientenzimmer", "Sanitär": "Nein", "Bestimmte Raumeigenschaften": "Optional", "Technik": "EDV-System"}
+        ]
     },
     {
         "Teilstelle": "2.02 Neugeborenenstation",
         "Räume": [
-            {"Name": "Pflege-Wöchnerinnen", "mind. Fläche (m²)": "18", "Technik": "Basisdiagnostik", "Sanitär": "Ja"},
-            {"Name": "Stillzimmer", "mind. Fläche (m²)": "10", "Technik": "Optional", "Sanitär": "Ja"}
-        ],
-        "mind. Raumbreite": "3m",
-        "mind. Türbreite": "1.30m",
-        "Fläche (m²)": "15-18",
-        "Technik": "Klimatisierung, Raumlufttechnik",
-        "Sanitär": "Bad an Bettenzimmer (WC, Waschbecken, Dusche)",
-        "Besonderheiten": "Spezielle Ausstattung für Neugeborene"
+            {"Name": "Pflege-Wöchnerinnen", "Raumgrößen": "mind. 18 m²", "Bedarf": "Pro Mutter", "Lageanforderungen": "Nahe Stillzimmer", "Sanitär": "Ja", "Bestimmte Raumeigenschaften": "Beruhigte Lage", "Technik": "Basisdiagnostik"}
+        ]
     },
     {
         "Teilstelle": "2.03 Intensivstation",
         "Räume": [
-            {"Name": "Intensivtherapie", "mind. Fläche (m²)": "25", "Technik": "Spezialsteckdosen (Sauerstoff, Vakuum, Druckluft)", "Sanitär": "Ja"},
-            {"Name": "Stroke Unit", "mind. Fläche (m²)": "20", "Technik": "Monitoring-System", "Sanitär": "Ja"}
-        ],
-        "mind. Raumbreite": "4m",
-        "mind. Türbreite": "1.40m",
-        "Fläche (m²)": "20-25",
-        "Technik": "Spezialsteckdosen (Sauerstoff, Vakuum, Druckluft), Klimatisierung, Raumlufttechnik",
-        "Sanitär": "Bad an Bettenzimmer (WC, Waschbecken, Dusche)",
-        "Besonderheiten": "Isolationsmöglichkeiten, Überdruck- und Unterdrucksysteme"
+            {"Name": "Intensivtherapie", "Raumgrößen": "mind. 25 m²", "Bedarf": "1 pro Patient", "Lageanforderungen": "Zentral", "Sanitär": "Ja", "Bestimmte Raumeigenschaften": "Schalldicht", "Technik": "Spezialsteckdosen (Sauerstoff, Vakuum, Druckluft)"}
+        ]
+    },
+    {
+        "Teilstelle": "2.04 Dialyse",
+        "Räume": [
+            {"Name": "Behandlungsraum", "Raumgrößen": "mind. 20 m²", "Bedarf": "Pro Patient", "Lageanforderungen": "Nahe Technikraum", "Sanitär": "Ja", "Bestimmte Raumeigenschaften": "Hygienebereich", "Technik": "Dialysegeräte"}
+        ]
+    },
+    {
+        "Teilstelle": "2.05 Kinder- und Jugendkrankenpflege",
+        "Räume": [
+            {"Name": "Kinderzimmer", "Raumgrößen": "mind. 15 m²", "Bedarf": "Pro Patient", "Lageanforderungen": "Nahe Spielraum", "Sanitär": "Ja", "Bestimmte Raumeigenschaften": "Farbenfrohes Design", "Technik": "Optional"}
+        ]
+    },
+    {
+        "Teilstelle": "2.06 Isolationskrankenpflege",
+        "Räume": [
+            {"Name": "Isoliereinheit", "Raumgrößen": "mind. 25 m²", "Bedarf": "1 pro Patient", "Lageanforderungen": "Separat", "Sanitär": "Ja", "Bestimmte Raumeigenschaften": "Schleusen", "Technik": "Raumlufttechnik mit Überdrucksystem"}
+        ]
+    },
+    {
+        "Teilstelle": "2.07 Pflege psychisch Kranker",
+        "Räume": [
+            {"Name": "Therapieraum", "Raumgrößen": "mind. 20 m²", "Bedarf": "1 pro Station", "Lageanforderungen": "Nahe Aufenthaltsraum", "Sanitär": "Nein", "Bestimmte Raumeigenschaften": "Beruhigte Atmosphäre", "Technik": "Optional"}
+        ]
+    },
+    {
+        "Teilstelle": "2.08 Pflege - Nuklearmedizin",
+        "Räume": [
+            {"Name": "Behandlungsraum", "Raumgrößen": "mind. 25 m²", "Bedarf": "1 pro Patient", "Lageanforderungen": "Nahe Diagnostik", "Sanitär": "Ja", "Bestimmte Raumeigenschaften": "Strahlenschutz", "Technik": "Spezialgeräte"}
+        ]
+    },
+    {
+        "Teilstelle": "2.09 Aufnahmepflege",
+        "Räume": [
+            {"Name": "Aufnahmezimmer", "Raumgrößen": "mind. 15 m²", "Bedarf": "Pro Patient", "Lageanforderungen": "Nahe Eingang", "Sanitär": "Nein", "Bestimmte Raumeigenschaften": "Diskretion", "Technik": "EDV-System"}
+        ]
+    },
+    {
+        "Teilstelle": "2.10 Pflege - Geriatrie",
+        "Räume": [
+            {"Name": "Patientenzimmer", "Raumgrößen": "mind. 20 m²", "Bedarf": "Pro Patient", "Lageanforderungen": "Nahe Aufenthaltsraum", "Sanitär": "Ja", "Bestimmte Raumeigenschaften": "Barrierefrei", "Technik": "TV, Notrufsystem"}
+        ]
+    },
+    {
+        "Teilstelle": "2.11 Tagesklinik",
+        "Räume": [
+            {"Name": "Therapieraum", "Raumgrößen": "mind. 15 m²", "Bedarf": "Pro Patient", "Lageanforderungen": "Zentral", "Sanitär": "Nein", "Bestimmte Raumeigenschaften": "Flexible Ausstattung", "Technik": "Optional"}
+        ]
+    },
+    {
+        "Teilstelle": "2.12 Palliativmedizin",
+        "Räume": [
+            {"Name": "Patientenzimmer", "Raumgrößen": "mind. 25 m²", "Bedarf": "Pro Patient", "Lageanforderungen": "Ruhig gelegen", "Sanitär": "Ja", "Bestimmte Raumeigenschaften": "Komfort", "Technik": "Klimatisierung, TV"}
+        ]
+    },
+    {
+        "Teilstelle": "2.13 Rehabilitation",
+        "Räume": [
+            {"Name": "Trainingsraum", "Raumgrößen": "mind. 30 m²", "Bedarf": "Pro Einheit", "Lageanforderungen": "Nahe Physiotherapie", "Sanitär": "Ja", "Bestimmte Raumeigenschaften": "Bewegungsfläche", "Technik": "Trainingsgeräte"}
+        ]
+    },
+    {
+        "Teilstelle": "2.14 Komfortstation",
+        "Räume": [
+            {"Name": "Patientenzimmer", "Raumgrößen": "mind. 30 m²", "Bedarf": "Pro Patient", "Lageanforderungen": "Ruhig", "Sanitär": "Ja", "Bestimmte Raumeigenschaften": "Luxuriöse Ausstattung", "Technik": "Klimatisierung, TV, WLAN"}
+        ]
     }
 ]
 
@@ -69,10 +113,19 @@ szenarien = {
 }
 
 # Umwandeln in DataFrame für Anzeige
-pflege_df = pd.DataFrame(pflege_teilstellen)
+pflege_df = []
+for teilstelle in pflege_teilstellen:
+    for raum in teilstelle["Räume"]:
+        pflege_df.append({"Teilstelle": teilstelle["Teilstelle"], **raum})
+
+pflege_df = pd.DataFrame(pflege_df)
 
 # Streamlit-Anzeige
-st.title("Funktionsbereich Pflege - Szenarien und Lösungen")
+st.title("Funktionsbereich Pflege - Übersicht und Szenarien")
+
+# Anzeige der Tabelle aller Teilstellen und Räume
+st.header("📋 Übersicht der Teilstellen und Räume")
+st.dataframe(pflege_df)
 
 # Szenarien anzeigen
 st.header("📌 Szenarien und Lösungen")
@@ -81,28 +134,18 @@ for name, details in szenarien.items():
     st.write("**Beschreibung:**", details["Beschreibung"])
     st.write("**Lösungsvorschlag:**", details["Lösung"])
 
-st.header("📋 Anforderungen der Teilstellen im Funktionsbereich Pflege")
-for teilstelle in pflege_teilstellen:
-    st.subheader(teilstelle["Teilstelle"])
-    st.write(pd.DataFrame(teilstelle["Räume"]))
-
 # Interaktive Filter
 st.header("🔍 Anforderungen filtern")
 min_flaeche = st.slider("Minimale Fläche (m²):", 0, 50, 15)
 spezialtechnik = st.checkbox("Nur mit spezieller Technik anzeigen")
 
-ergebnis = [
-    {
-        "Teilstelle": teilstelle["Teilstelle"],
-        "Räume": [raum for raum in teilstelle["Räume"] if int(raum["mind. Fläche (m²)"]) >= min_flaeche and (not spezialtechnik or "Spezial" in raum["Technik"])]
-    }
-    for teilstelle in pflege_teilstellen
+ergebnis = pflege_df[
+    (pflege_df["Raumgrößen"].str.extract(r'(\d+)').astype(int) >= min_flaeche).any(axis=1) &
+    (pflege_df["Technik"].str.contains("Spezial") if spezialtechnik else True)
 ]
 
 st.subheader("Gefilterte Ergebnisse")
-for res in ergebnis:
-    st.subheader(res["Teilstelle"])
-    st.write(pd.DataFrame(res["Räume"]))
+st.dataframe(ergebnis)
 
 # Interaktive Karte
 st.header("📍 Interaktive Krankenhauskarte")
