@@ -77,8 +77,18 @@ st.header("📌 Wähle ein Szenario")
 scenario_choice = st.selectbox("Szenario auswählen", list(szenarien.keys()))
 st.write("**Beschreibung:**", szenarien[scenario_choice])
 
+# Simulation der Szenarien basierend auf Anforderungen
 st.header("🔍 Simulationsergebnisse")
 for teilstelle in selected_teilstellen:
     st.subheader(f"Ergebnis für {teilstelle}")
-    st.write("Analyse basierend auf Raum- und technischen Anforderungen...")
-    st.write("(Detaillierte Simulation wird hier ausgegeben)")
+    matching_rooms = [raum for raum in next(t["Räume"] for t in pflege_teilstellen if t["Teilstelle"] == teilstelle)]
+    if scenario_choice == "Szenario 1" and any("Basisdiagnostik" in raum["Technik"] for raum in matching_rooms):
+        st.write("Diese Teilstelle kann angepasst werden, um die Betreuung von Neugeborenen zu ermöglichen. Zusätzliche Ausstattung könnte erforderlich sein.")
+    elif scenario_choice == "Szenario 2" and any("Notrufsystem" in raum["Technik"] for raum in matching_rooms):
+        st.write("Diese Teilstelle könnte mit einer anderen Pflegeeinheit kombiniert werden, um Personalmangel auszugleichen.")
+    elif scenario_choice == "Szenario 3" and any("Spezialsteckdosen" in raum["Technik"] for raum in matching_rooms):
+        st.write("Diese Teilstelle ist für die Pandemie-Bewältigung gut geeignet. Mögliche Erweiterungen für Intensivbetten könnten geprüft werden.")
+    elif scenario_choice == "Szenario 4" and any("EDV-Anbindung" in raum["Technik"] for raum in matching_rooms):
+        st.write("Diese Teilstelle könnte temporär als alternative Pflegeeinheit genutzt werden.")
+    else:
+        st.write("Keine spezifische Anpassung erforderlich oder nicht optimal für dieses Szenario.")
