@@ -3,7 +3,7 @@ import pandas as pd
 import pdfplumber
 
 # Definition der 14 Teilstellen des Funktionsbereichs Pflege mit spezifischen Zimmeranforderungen
-csv_url = "https://raw.githubusercontent.com/magdalenaruell/pflege-planung/main/Kopie von 250122_Excel-AnfordeungenDIN.xlsx - Funktionsbereiche.csv"
+csv_url = "https://raw.githubusercontent.com/magdalenaruell/pflege-planung/main/250122_Excel-AnfordeungenDIN.csv"
 
 df = pd.read_csv(csv_url)
 
