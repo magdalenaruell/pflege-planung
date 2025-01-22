@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-import folium
-from streamlit_folium import st_folium
 
 # Definition der Teilstellen des Funktionsbereichs Pflege mit spezifischen Zimmeranforderungen
 pflege_teilstellen = [
@@ -92,24 +90,12 @@ pflege_teilstellen = [
     }
 ]
 
-# Szenarien-Beschreibungen und Lösungsvorschläge
+# Szenarien-Beschreibungen
 szenarien = {
-    "Szenario 1": {
-        "Beschreibung": "Fehlendes Fachpersonal: Eine Neugeborenenstation wird geschlossen. Es wird geprüft, welche Pflegeeinheit stattdessen eingerichtet werden kann.",
-        "Lösung": "Die Intensivstation (2.03) könnte als Alternative dienen, da sie ähnliche technische Anforderungen wie Klimatisierung und Raumlufttechnik hat. Ein Stillzimmer könnte eingerichtet werden, und die Ausstattung für Neugeborene müsste ergänzt werden."
-    },
-    "Szenario 2": {
-        "Beschreibung": "Personalmangel: Stationen müssen zusammengelegt werden. Es wird geprüft, welche Bereiche ähnliche Anforderungen haben.",
-        "Lösung": "Die Allgemeine Pflege (2.01) und die Geriatrie könnten zusammengelegt werden. Gemeinsam genutzte Ressourcen wie Medikamentenräume und Personalaufenthaltsräume können die Effizienz steigern."
-    },
-    "Szenario 3": {
-        "Beschreibung": "Pandemie: Es besteht ein erhöhter Bedarf an Intensivmedizin und Isolierstationen.",
-        "Lösung": "Allgemeine Pflegezimmer (z. B. 3-Bett-Zimmer) könnten in temporäre Isoliereinheiten umgewandelt werden. Die Stroke Unit und Chest-Pain-Unit innerhalb der Intensivstation könnten erweitert werden, da diese bereits über spezialisierte Technik verfügen."
-    },
-    "Szenario 4": {
-        "Beschreibung": "Umbau: Während einer Gebäuderenovierung muss eine Station vorübergehend verlagert werden.",
-        "Lösung": "Räume der Tagesklinik oder Rehabilitation könnten temporär genutzt werden. Nicht genutzte Lagerbereiche könnten für die Lagerung von Technik und Möbeln während des Umbaus verwendet werden."
-    }
+    "Szenario 1": "Fehlendes Fachpersonal: Eine Neugeborenenstation wird geschlossen. Es wird geprüft, welche Pflegeeinheit stattdessen eingerichtet werden kann.",
+    "Szenario 2": "Personalmangel: Stationen müssen zusammengelegt werden. Es wird geprüft, welche Bereiche ähnliche Anforderungen haben.",
+    "Szenario 3": "Pandemie: Es besteht ein erhöhter Bedarf an Intensivmedizin und Isolierstationen.",
+    "Szenario 4": "Umbau: Während einer Gebäuderenovierung muss eine Station vorübergehend verlagert werden."
 }
 
 # Umwandeln in DataFrame für Anzeige
@@ -121,48 +107,50 @@ for teilstelle in pflege_teilstellen:
 pflege_df = pd.DataFrame(pflege_df)
 
 # Streamlit-Anzeige
-st.title("Funktionsbereich Pflege - Übersicht und Szenarien")
+st.title("Pflegebereichs-Szenario-Simulation")
 
-# Anzeige der Tabelle aller Teilstellen und Räume
+# Anzeige der vollständigen Tabelle aller Teilstellen und Räume
 st.header("📋 Übersicht der Teilstellen und Räume")
 st.dataframe(pflege_df)
 
-# Szenarien anzeigen
-st.header("📌 Szenarien und Lösungen")
-for name, details in szenarien.items():
-    st.subheader(name)
-    st.write("**Beschreibung:**", details["Beschreibung"])
-    st.write("**Lösungsvorschlag:**", details["Lösung"])
+# Szenario Auswahl
+st.header("📌 Wähle ein Szenario")
+scenario_choice = st.selectbox("Szenario auswählen", list(szenarien.keys()))
+st.write("**Beschreibung:**", szenarien[scenario_choice])
 
-# Interaktive Filter
-st.header("🔍 Anforderungen filtern")
-min_flaeche = st.slider("Minimale Fläche (m²):", 0, 50, 15)
-spezialtechnik = st.checkbox("Nur mit spezieller Technik anzeigen")
+# Teilstelle Auswahl
+st.header("🏥 Wähle eine Teilstelle")
+teilstelle_choice = st.selectbox("Teilstelle auswählen", [t["Teilstelle"] for t in pflege_teilstellen])
 
-ergebnis = pflege_df[
-    (pflege_df["Raumgrößen"].str.extract(r'(\d+)').astype(int) >= min_flaeche).any(axis=1) &
-    (pflege_df["Technik"].str.contains("Spezial") if spezialtechnik else True)
-]
+# Anzeige der Raumanforderungen der gewählten Teilstelle
+st.header("📋 Anforderungen der gewählten Teilstelle")
+selected_teilstelle = next((t for t in pflege_teilstellen if t["Teilstelle"] == teilstelle_choice), None)
+if selected_teilstelle:
+    st.dataframe(pd.DataFrame(selected_teilstelle["Räume"]))
 
-st.subheader("Gefilterte Ergebnisse")
-st.dataframe(ergebnis)
+# Lösungsdarstellung basierend auf Anforderungen
+st.header("🔍 Lösungsvorschlag")
+if scenario_choice == "Szenario 1":
+    if any("Basisdiagnostik" in raum["Technik"] for raum in selected_teilstelle["Räume"]):
+        st.write("Die Teilstelle verfügt über geeignete diagnostische Einrichtungen, um die Neugeborenenversorgung zu übernehmen. Eine Anpassung der Räume zur spezifischen Betreuung könnte erforderlich sein.")
+    else:
+        st.write("Diese Teilstelle erfüllt nicht die technischen Anforderungen für die Neugeborenenpflege.")
 
-# Interaktive Karte
-st.header("📍 Interaktive Krankenhauskarte")
+elif scenario_choice == "Szenario 2":
+    if any("EDV-System" in raum["Technik"] for raum in selected_teilstelle["Räume"]):
+        st.write("Diese Teilstelle verfügt über digitale Infrastruktur, die eine effiziente Zusammenlegung mit anderen Einheiten ermöglicht.")
+    else:
+        st.write("Es könnten zusätzliche EDV-Anbindungen erforderlich sein, um eine Zusammenlegung zu erleichtern.")
 
-# Standard-Koordinaten für Beispielkarte
-m = folium.Map(location=[52.52, 13.405], zoom_start=15)
+elif scenario_choice == "Szenario 3":
+    if any("Spezialsteckdosen" in raum["Technik"] for raum in selected_teilstelle["Räume"]):
+        st.write("Diese Teilstelle ist für Intensivmedizin geeignet und könnte erweitert werden, um die Anforderungen der Pandemie zu erfüllen.")
+    else:
+        st.write("Zusätzliche technische Einrichtungen sind erforderlich, um diese Teilstelle für Intensivmedizin zu nutzen.")
 
-# Beispielpunkte hinzufügen
-stationen = {
-    "Allgemeine Pflege": [52.522, 13.404],
-    "Neugeborenenstation": [52.523, 13.405],
-    "Intensivstation": [52.521, 13.406]
-}
-
-for name, coord in stationen.items():
-    folium.Marker(coord, popup=name, tooltip=name).add_to(m)
-
-# Karte in Streamlit anzeigen
-st_data = st_folium(m, width=700, height=500)
+elif scenario_choice == "Szenario 4":
+    if any("Schalldicht" in raum["Bestimmte Raumeigenschaften"] for raum in selected_teilstelle["Räume"]):
+        st.write("Diese Teilstelle bietet eine ruhige Umgebung, die für eine temporäre Verlagerung geeignet ist.")
+    else:
+        st.write("Es könnten zusätzliche Anpassungen erforderlich sein, um diese Teilstelle für die Verlagerung nutzbar zu machen.")
 
