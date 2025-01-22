@@ -90,6 +90,10 @@ pflege_teilstellen = [
     }
 ]
 
+# Auswahl der vorhandenen Teilstellen in der Einrichtung
+st.header("🏥 Wähle die vorhandenen Teilstellen in der Einrichtung")
+selected_teilstellen = st.multiselect("Welche Teilstellen sind in der Einrichtung vorhanden?", [t["Teilstelle"] for t in pflege_teilstellen], default=[t["Teilstelle"] for t in pflege_teilstellen])
+
 # Szenarien-Beschreibungen
 szenarien = {
     "Szenario 1": "Fehlendes Fachpersonal: Eine Neugeborenenstation wird geschlossen. Es wird geprüft, welche Pflegeeinheit stattdessen eingerichtet werden kann.",
