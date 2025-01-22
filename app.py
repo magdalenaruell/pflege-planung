@@ -45,9 +45,9 @@ st.header("📌 Wähle ein Szenario")
 scenario_choice = st.selectbox("Szenario auswählen", list(szenarien.keys()))
 st.write("**Beschreibung:**", szenarien[scenario_choice])
 
-# Teilstelle Auswahl basierend auf der vorherigen Auswahl
+# Teilstelle Auswahl - Alle Teilstellen zur Auswahl ermöglichen
 st.header("🏥 Wähle eine Teilstelle")
-teilstelle_choice = st.selectbox("Teilstelle auswählen", selected_teilstellen)
+teilstelle_choice = st.selectbox("Teilstelle auswählen", [t["Teilstelle"] for t in pflege_teilstellen])
 
 # Lösungsdarstellung basierend auf Anforderungen
 st.header("🔍 Lösungsvorschlag")
