@@ -45,36 +45,40 @@ szenarien = {
     "Szenario 4": "Umbau: Während einer Gebäuderenovierung muss eine Station vorübergehend verlagert werden."
 }
 
-# Umwandeln in DataFrame für Anzeige
-pflege_df = pd.DataFrame(pflege_teilstellen)
-
 # Streamlit-Anzeige
 st.title("Pflegebereichs-Szenario-Simulation")
 
-# Anzeige der vollständigen Tabelle aller Teilstellen mit Auswahlmöglichkeit
+# Auswahl der Teilstellen
 st.header("📋 Wähle die in der Einrichtung vorhandenen Teilstellen")
-edited_df = st.data_editor(pflege_df, use_container_width=True, num_rows="dynamic", disabled=["Räume"])
-
-# Filtern der ausgewählten Teilstellen
+edited_df = st.data_editor(pd.DataFrame(pflege_teilstellen), use_container_width=True, num_rows="dynamic", disabled=["Räume"])
 selected_teilstellen = edited_df[edited_df["Ausgewählt"] == True]["Teilstelle"].tolist()
 
-# Szenario Auswahl
+# Hochladen eines PDF-Plans oder manuelle Eingabe
+st.header("📂 Lade einen PDF-Plan hoch oder gib die relevanten Daten manuell ein")
+pdf_file = st.file_uploader("Lade einen PDF-Plan mit Raumtypen und Größen hoch", type=["pdf"])
+raumdaten = []
+if pdf_file:
+    with pdfplumber.open(pdf_file) as pdf:
+        for page in pdf.pages:
+            text = page.extract_text()
+            if text:
+                raumdaten.extend(text.split("\n"))
+    st.write("Extrahierte Raumdaten:")
+    st.write(raumdaten)
+else:
+    st.write("📌 Falls kein PDF vorhanden ist, gib die relevanten Daten manuell ein:")
+    for teilstelle in selected_teilstellen:
+        st.subheader(f"{teilstelle} - Manuelle Eingabe")
+        for raum in next(t["Räume"] for t in pflege_teilstellen if t["Teilstelle"] == teilstelle):
+            st.text_input(f"{raum} - Größe (m²)")
+
+# Szenario Auswahl und Simulation
 st.header("📌 Wähle ein Szenario")
 scenario_choice = st.selectbox("Szenario auswählen", list(szenarien.keys()))
 st.write("**Beschreibung:**", szenarien[scenario_choice])
 
-# Simulation der Szenarien basierend auf Raumanforderungen
 st.header("🔍 Simulationsergebnisse")
 for teilstelle in selected_teilstellen:
     st.subheader(f"Ergebnis für {teilstelle}")
-    if scenario_choice == "Szenario 1" and "Neugeborene" in str(teilstelle):
-        st.write("Diese Teilstelle kann angepasst werden, um die Betreuung von Neugeborenen zu ermöglichen. Zusätzliche Ausstattung könnte erforderlich sein.")
-    elif scenario_choice == "Szenario 2" and "Geriatrie" in str(teilstelle):
-        st.write("Die Geriatrie könnte mit einer anderen Pflegeeinheit kombiniert werden, um Personalmangel auszugleichen.")
-    elif scenario_choice == "Szenario 3" and "Intensivmedizin" in str(teilstelle):
-        st.write("Diese Teilstelle ist für die Pandemie-Bewältigung gut geeignet. Mögliche Erweiterungen für Intensivbetten könnten geprüft werden.")
-    elif scenario_choice == "Szenario 4" and "Tagesklinik" in str(teilstelle):
-        st.write("Die Tagesklinik könnte temporär als alternative Pflegeeinheit genutzt werden.")
-    else:
-        st.write("Keine spezifische Anpassung erforderlich oder nicht optimal für dieses Szenario.")
-
+    st.write("Analyse basierend auf Raum- und technischen Anforderungen...")
+    st.write("(Detaillierte Simulation wird hier ausgegeben)")
