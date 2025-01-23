@@ -3,19 +3,46 @@ import pandas as pd
 import pdfplumber
 
 # Definition der 14 Teilstellen des Funktionsbereichs Pflege mit spezifischen Zimmeranforderungen
-csv_url = "https://raw.githubusercontent.com/magdalenaruell/pflege-planung/main/250122_Excel-AnfordeungenDIN.csv"
-
-df = pd.read_csv(csv_url)
-
-import streamlit as st
-st.write(df)
+pflege_teilstellen = [
+    {"Teilstelle": "2.01 Allgemeine Pflege", "Ausgewählt": False, "Räume": [
+        "Arztraum", "Dienstplatz", "Personalaufenthaltsräume", "Teeküche", "Medikamentenräume", "Waschräume",
+        "Arbeitsraum unrein", "Ver- und Entsorgung Wäsche", "Ver- und Entsorgung Abfall", "Ver- und Entsorgung Speisen",
+        "Ver- und Entsorgung Medikamente", "Bettenzimmer", "Patientenzimmer (3-Bett)", "Patientenzimmer (2-Bett)",
+        "Patientenzimmer (Einzel)", "WC Personal", "WC Besucher", "Patientenaufenthaltsraum", "Technikraum"
+    ]},
+    {"Teilstelle": "2.02 Wöchnerinnen- und Neugeborenenpflege", "Ausgewählt": False, "Räume": [
+        "Pflege - Wöchnerinnen", "Pflege - Neugeborene"
+    ]},
+    {"Teilstelle": "2.03 Intensivmedizin", "Ausgewählt": False, "Räume": [
+        "Intensivtherapie", "Intensivüberwachung", "Stroke Unit", "Chest-Pain-Unit", "Schwerstbrandverletzte"
+    ]},
+    {"Teilstelle": "2.04 Dialyse", "Ausgewählt": False, "Räume": [
+        "Aktudialyse", "Chronische Dialyse"
+    ]},
+    {"Teilstelle": "2.05 Säuglings-, Kinder- und Jugendkrankenpflege", "Ausgewählt": False, "Räume": [
+        "Allgemeine Kinder- und Jugendkrankenpflege", "Säuglingskrankenpflege", "Kinderintensivpflege", "Neonatologie"
+    ]},
+    {"Teilstelle": "2.06 Isolationskrankenpflege", "Ausgewählt": False, "Räume": [
+        "Infektionskrankenpflege", "Umkehrisolation"
+    ]},
+    {"Teilstelle": "2.07 Pflege psychisch Kranker", "Ausgewählt": False, "Räume": [
+        "Allgemeine Psychiatrie", "Forensische Psychiatrie", "Gerontopsychatrie", "Psychosomatik", "Kinder- und Jugendpsychiatrie"
+    ]},
+    {"Teilstelle": "2.08 Pflege - Nuklearmedizin", "Ausgewählt": False, "Räume": []},
+    {"Teilstelle": "2.09 Aufnahmepflege", "Ausgewählt": False, "Räume": []},
+    {"Teilstelle": "2.10 Pflege - Geriatrie", "Ausgewählt": False, "Räume": []},
+    {"Teilstelle": "2.11 Tagesklinik", "Ausgewählt": False, "Räume": []},
+    {"Teilstelle": "2.12 Palliativmedizin", "Ausgewählt": False, "Räume": []},
+    {"Teilstelle": "2.13 Rehabilitation", "Ausgewählt": False, "Räume": []},
+    {"Teilstelle": "2.14 Komfortstation", "Ausgewählt": False, "Räume": []}
+]
 
 # Szenarien-Beschreibungen
 szenarien = {
-    "Szenario 1": "Fehlendes Fachpersonal: Eine Teilstelle wird geschlossen. Es wird geprüft, welche Pflegeeinheit stattdessen eingerichtet werden kann.",
-    "Szenario 2": "Personalmangel: Teilstellen müssen zusammengelegt werden. Es wird geprüft, welche Bereiche ähnliche Anforderungen haben.",
-    "Szenario 3": "Pandemie: Erhöhter Bedarf an Intensivmedizin (2.03) und Isolierstation (2.05). Es wird geprüft, welche Interimsnutzungen möglich sind.",
-    "Szenario 4": "Umbau: Eine Teilstelle muss während der Renovierung in einer anderen untergebracht werden."
+    "Szenario 1": "Fehlendes Fachpersonal: Eine Neugeborenenstation wird geschlossen. Es wird geprüft, welche Pflegeeinheit stattdessen eingerichtet werden kann.",
+    "Szenario 2": "Personalmangel: Stationen müssen zusammengelegt werden. Es wird geprüft, welche Bereiche ähnliche Anforderungen haben.",
+    "Szenario 3": "Pandemie: Es besteht ein erhöhter Bedarf an Intensivmedizin und Isolierstationen.",
+    "Szenario 4": "Umbau: Während einer Gebäuderenovierung muss eine Station vorübergehend verlagert werden."
 }
 
 # Streamlit-Anzeige
@@ -26,14 +53,9 @@ st.header("📋 Wähle die in der Einrichtung vorhandenen Teilstellen")
 edited_df = st.data_editor(pd.DataFrame(pflege_teilstellen), use_container_width=True, num_rows="dynamic", disabled=["Räume"])
 selected_teilstellen = edited_df[edited_df["Ausgewählt"] == True]["Teilstelle"].tolist()
 
-# PDF-Upload oder Manuelle Eingabe
+# Hochladen eines PDF-Plans oder manuelle Eingabe
 st.header("📂 Lade einen PDF-Plan hoch oder gib die relevanten Daten manuell ein")
 pdf_file = st.file_uploader("Lade einen PDF-Plan mit Raumtypen und Größen hoch", type=["pdf"])
-
-# Option zum Fortfahren ohne Daten
-st.write("Falls kein PDF vorhanden ist und keine manuelle Eingabe erfolgen soll, kannst du ohne Daten fortfahren.")
-fortfahren = st.checkbox("Ohne Daten fortfahren")
-
 raumdaten = []
 if pdf_file:
     with pdfplumber.open(pdf_file) as pdf:
@@ -43,25 +65,31 @@ if pdf_file:
                 raumdaten.extend(text.split("\n"))
     st.write("Extrahierte Raumdaten:")
     st.write(raumdaten)
-elif not fortfahren:
+else:
     st.write("📌 Falls kein PDF vorhanden ist, gib die relevanten Daten manuell ein:")
     for teilstelle in selected_teilstellen:
         st.subheader(f"{teilstelle} - Manuelle Eingabe")
         for raum in next(t["Räume"] for t in pflege_teilstellen if t["Teilstelle"] == teilstelle):
             st.text_input(f"{raum} - Größe (m²)")
 
-# Szenario Auswahl
+# Szenario Auswahl und Simulation
 st.header("📌 Wähle ein Szenario")
 scenario_choice = st.selectbox("Szenario auswählen", list(szenarien.keys()))
 st.write("**Beschreibung:**", szenarien[scenario_choice])
 
-# Dynamische Analyse und Simulation
+# Simulation der Szenarien basierend auf Anforderungen
 st.header("🔍 Simulationsergebnisse")
-if not selected_teilstellen:
-    st.write("⚠ Bitte wähle mindestens eine Teilstelle aus.")
-else:
-    for teilstelle in selected_teilstellen:
-        st.subheader(f"Ergebnis für {teilstelle}")
-        vergleich_df = pd.DataFrame([{ "Teilstelle": teilstelle, "Raumgrößen": next(t.get("Raumgrößen", "N/A") for t in pflege_teilstellen if t["Teilstelle"] == teilstelle), "Technik": next(t.get("Technik", "N/A") for t in pflege_teilstellen if t["Teilstelle"] == teilstelle) }])
-        st.dataframe(vergleich_df)
-        st.write("Detaillierte Lösungsvorschläge basierend auf Raumgrößen, Technik und Bedarf...")
+for teilstelle in selected_teilstellen:
+    st.subheader(f"Ergebnis für {teilstelle}")
+    matching_rooms = [raum for raum in next(t["Räume"] for t in pflege_teilstellen if t["Teilstelle"] == teilstelle)]
+    if scenario_choice == "Szenario 1" and any("Basisdiagnostik" in raum["Technik"] for raum in matching_rooms):
+        st.write("Diese Teilstelle kann angepasst werden, um die Betreuung von Neugeborenen zu ermöglichen. Zusätzliche Ausstattung könnte erforderlich sein.")
+    elif scenario_choice == "Szenario 2" and any("Notrufsystem" in raum["Technik"] for raum in matching_rooms):
+        st.write("Diese Teilstelle könnte mit einer anderen Pflegeeinheit kombiniert werden, um Personalmangel auszugleichen.")
+    elif scenario_choice == "Szenario 3" and any("Spezialsteckdosen" in raum["Technik"] for raum in matching_rooms):
+        st.write("Diese Teilstelle ist für die Pandemie-Bewältigung gut geeignet. Mögliche Erweiterungen für Intensivbetten könnten geprüft werden.")
+    elif scenario_choice == "Szenario 4" and any("EDV-Anbindung" in raum["Technik"] for raum in matching_rooms):
+        st.write("Diese Teilstelle könnte temporär als alternative Pflegeeinheit genutzt werden.")
+    else:
+        st.write("Keine spezifische Anpassung erforderlich oder nicht optimal für dieses Szenario.")
+
