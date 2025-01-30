@@ -10,6 +10,7 @@ file_path = pflege-planung/WebAnwendung_250128 NBO DIN.xlsx
 
 # Excel Datei einlesen
 xls = pd.ExcelFile(file_path)
+df = pd.read_excel(file_path, engine="openpyxl")
 
 # Festes Tabellenblatt wählen
 sheet_name = "Paulina"
