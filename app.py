@@ -6,7 +6,7 @@ pip install openpyxl
 st.title("Krankenhaus-Planungstabelle")
 
 # Datei laden
-file_path = pflege-planung/WebAnwendung_250128 NBO DIN.xlsx
+file_path = (WebAnwendung_250128 NBO DIN.xlsx)
 
 # Excel Datei einlesen
 xls = pd.ExcelFile(file_path)
