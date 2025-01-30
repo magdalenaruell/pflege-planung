@@ -5,7 +5,7 @@ import pandas as pd
 st.title("Krankenhaus-Planungstabelle")
 
 # Datei laden
-file_path = (WebAnwendung_250128_NBO_DIN.xlsx)
+file_path = "WebAnwendung_250128_NBO_DIN.xlsx"
 
 # Excel Datei einlesen
 xls = pd.ExcelFile(file_path)
