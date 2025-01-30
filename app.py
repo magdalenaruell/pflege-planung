@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-pip install openpyxl
 
 # Titel der Anwendung
 st.title("Krankenhaus-Planungstabelle")
