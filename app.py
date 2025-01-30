@@ -19,7 +19,7 @@ df = pd.read_excel(xls, sheet_name=sheet_name)
 df.columns = [f"Spalte_{i}" if "Unnamed" in str(col) else col for i, col in enumerate(df.columns)]
 
 # Tabelle anzeigen mit Zeilenauswahl
-st.subheader("Tabellenansicht")
+st.subheader("Wählen Sie die in Ihrer Einrichtung vorhandenen Funktionsbereiche und Teilstellen")
 selected_rows = st.data_editor(df, height=500, num_rows="dynamic")
 
 # Anzeige der ausgewählten Zeilen
