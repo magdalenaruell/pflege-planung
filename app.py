@@ -33,38 +33,19 @@ if "ID" not in df.columns:
     st.error("❌ Die Spalte 'ID' wurde nicht gefunden. Bitte prüfen Sie die Datei.")
     st.stop()
 
-# ✅ **Nur Zeilen mit einer gültigen 'ID' auswählen**
-df_filtered = df[df["ID"].notna()]
+# ✅ **Nur Zeilen mit erlaubten Werten in der "ID"-Spalte auswählen**
+erlaubte_werte = ["2.01", "2.02", "2.03", "2.04", "2.05", "2.06", "2.07", "2.08", "2.09", "2.10", "2.11", "2.12", "2.13", "2.14"]
+df_filtered = df[df["ID"].astype(str).isin(erlaubte_werte)]
 
-# ✅ **Nur dreistellige IDs für die Auswahl filtern**
-dreistellige_spalten = [col for col in df_filtered.columns if col.replace('.', '').isdigit() and len(col.replace('.', '')) == 3]
+# 🔹 Auswahl der ID-Werte
+st.subheader("📌 Wählen Sie eine ID")
+selected_id = st.selectbox("🔍 Verfügbare IDs:", df_filtered["ID"].unique())
 
-# 🔹 Auswahl der Teilstellen (nur dreistellige IDs)
-st.subheader("📌 Wählen Sie die dreistelligen Teilstellen")
-selected_part_areas = st.multiselect("🔍 Verfügbare Teilstellen:", dreistellige_spalten)
+# 🔹 Zeige die Zeilen für die ausgewählte ID
+filtered_data = df_filtered[df_filtered["ID"] == selected_id]
 
-if selected_part_areas:
-    # 🔹 Filtere das DataFrame nur für die gewählten dreistelligen Teilstellen
-    selected_df = df_filtered[selected_part_areas]
-    st.subheader("✅ Ausgewählte Teilstellen")
-    st.dataframe(selected_df, use_container_width=True)
-
-    # 🔹 Finde dazugehörige **sechsstellige Räume**
-    sechsstellige_spalten = [col for col in df_filtered.columns if col.replace('.', '').isdigit() and len(col.replace('.', '')) == 6]
-    matched_rooms = {}
-
-    for part_area in selected_part_areas:
-        # Suche alle sechsstelligen Räume, die mit der dreistelligen ID beginnen
-        related_rooms = [col for col in sechsstellige_spalten if col.startswith(part_area)]
-        if related_rooms:
-            matched_rooms[part_area] = related_rooms
-
-    # 🔹 Zeige die Räume als separate Tabellen
-    if matched_rooms:
-        st.subheader("🏠 Zugehörige Räume der ausgewählten Teilstellen")
-        for part_area, rooms in matched_rooms.items():
-            st.markdown(f"### 🏥 Räume für Teilstelle **{part_area}**")
-            st.dataframe(df_filtered[rooms], use_container_width=True)
+st.subheader(f"✅ Zeilen für ID: {selected_id}")
+st.dataframe(filtered_data, use_container_width=True)
 
 # 🦠 **Szenario Pandemie** (Schöner formatiert)
 st.markdown("""
@@ -91,5 +72,7 @@ st.markdown("""
 # 📊 **Vergleichsmöglichkeit**
 st.subheader("📊 Wählen Sie die Teilstellen, die Sie vergleichen möchten")
 compare_options = st.multiselect("🔍 Teilstellen auswählen:", df_filtered.columns)
+
 if compare_options:
-    st.write(df_filtered[compare_options])
+    st.subheader("📊 Vergleich der gewählten Teilstellen")
+    st.dataframe(df_filtered[compare_options], use_container_width=True)
