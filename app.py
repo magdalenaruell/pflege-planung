@@ -29,25 +29,24 @@ try:
         st.error("❌ Die Excel-Datei enthält keine Tabellenblätter.")
         st.stop()
     
-    # Zeige alle verfügbaren Tabellenblätter als Buttons nebeneinander
-    st.subheader("📄 Wählen Sie ein Tabellenblatt:")
+    # Zeige alle verfügbaren Tabellenblätter als Multi-Select
+    st.subheader("📄 Wählen Sie die Tabellenblätter aus:")
     
-    # **Speichere die Auswahl mit Session-State**
-    if "selected_sheet" not in st.session_state:
-        st.session_state.selected_sheet = list(sheets.keys())[0]  # Standardwert: Erstes Blatt
+    # **Session-State für Auswahl der Tabellenblätter**
+    if "selected_sheets" not in st.session_state:
+        st.session_state.selected_sheets = []  # Standardwert: Keine Auswahl
+    
+    selected_sheets = st.multiselect("🔍 Wählen Sie die Tabellenblätter:", list(sheets.keys()), default=st.session_state.selected_sheets)
 
-    cols = st.columns(len(sheets))  # Erzeuge Spalten für die Buttons
+    # Speichere die Auswahl in Session-State, damit sie bestehen bleibt
+    st.session_state.selected_sheets = selected_sheets
 
-    for i, sheet in enumerate(sheets.keys()):
-        if cols[i].button(sheet):  # Falls der Button geklickt wird, setze das Blatt
-            st.session_state.selected_sheet = sheet
-
-    # Lade das ausgewählte Tabellenblatt als DataFrame
-    df_filtered = sheets[st.session_state.selected_sheet]
-
-    # Zeige alle Zeilen des gewählten Tabellenblatts
-    st.subheader(f"📄 Alle Daten aus {st.session_state.selected_sheet}")
-    st.dataframe(df_filtered, use_container_width=True, height=600)  # Scrollbare Tabelle
+    # Zeige die Daten für die ausgewählten Tabellenblätter
+    if selected_sheets:
+        for sheet in selected_sheets:
+            df_filtered = sheets[sheet]  # Lade das Tabellenblatt
+            st.subheader(f"📄 Alle Daten aus {sheet}")
+            st.dataframe(df_filtered, use_container_width=True, height=600)  # Scrollbare Tabelle
 
 except Exception as e:
     st.error(f"❌ Fehler beim Laden der Excel-Datei: {str(e)}")
@@ -75,11 +74,21 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # 📊 **Vergleichsmöglichkeit**
-st.subheader("📊 Wählen Sie die Spalten, die Sie vergleichen möchten")
-compare_options = st.multiselect("🔍 Spalten auswählen:", df_filtered.columns)
+if selected_sheets:
+    st.subheader("📊 Wählen Sie die Spalten, die Sie vergleichen möchten")
 
-if compare_options:
-    st.subheader("📊 Vergleich der gewählten Spalten")
-    st.dataframe(df_filtered[compare_options], use_container_width=True, height=600)
+    # Kombiniere alle gewählten Tabellenblätter zu einer gemeinsamen Auswahl
+    all_columns = []
+    for sheet in selected_sheets:
+        all_columns.extend(sheets[sheet].columns)
 
+    # Einzigartige Spalten anzeigen
+    all_columns = list(set(all_columns))
+
+    compare_options = st.multiselect("🔍 Spalten auswählen:", all_columns)
+
+    if compare_options:
+        st.subheader("📊 Vergleich der gewählten Spalten")
+        combined_data = pd.concat([sheets[sheet][compare_options] for sheet in selected_sheets], ignore_index=True)
+        st.dataframe(combined_data, use_container_width=True, height=600)
 
