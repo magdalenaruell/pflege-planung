@@ -23,8 +23,13 @@ else:
         
 # Jedes Tabellenblatt in ein eigenes DataFrame umwandeln
 for sheet_name, df in sheets.items():
-    print(f"📄 Tabellenblatt: {sheet_name}")
+    print(f"📄 Tabellenblatt: {1}")
+    print(1)  # Erste Zeilen anzeigen
+
+    print(f"📄 Tabellenblatt: {2}")
     print(df.head())  # Erste Zeilen anzeigen
+
+
 
 # 🔹 Auswahl der ID-Werte
 st.subheader("📌 Wählen Sie eine ID")
