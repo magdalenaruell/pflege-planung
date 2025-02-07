@@ -15,8 +15,6 @@ df = pd.read_excel(file_path, engine="openpyxl")
 sheet_name = "Paulina"
 df = pd.read_excel(xls, sheet_name=sheet_name)
 
- # Spaltennamen bereinigen
-    df.columns = [col if "Unnamed" not in str(col) else f"Spalte_{i}" for i, col in enumerate(df.columns)]
 
     # ✅ Nur Spalten mit **dreistelligen** IDs für die Auswahl filtern
     dreistellige_spalten = [col for col in df.columns if col.replace('.', '').isdigit() and len(col.replace('.', '')) == 3]
