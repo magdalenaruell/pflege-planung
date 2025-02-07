@@ -24,7 +24,7 @@ else:
 try:
     sheets = pd.read_excel(file_path, sheet_name=None)  # `None` lädt alle Tabellenblätter
     for sheet_name, df in sheets.items():
-        print(f"📄 Lade Tabellenblatt: {1}")
+        print(f"📄 Lade Tabellenblatt: {sheet.name}")
         print(df.head())  # Zeige die ersten Zeilen an
 except Exception as e:
     print(f"❌ Fehler beim Laden der Excel-Datei: {str(e)}")
