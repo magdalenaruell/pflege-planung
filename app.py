@@ -42,10 +42,15 @@ try:
         for sheet in selected_sheets:
             df_filtered = sheets[sheet]  
             st.subheader(f"📄 Alle Daten aus {sheet}")
-            st.dataframe(df_filtered, use_container_width=True, height=600)  
+            st.dataframe(df_filtered, use_container_width=True, height=600)
 
-   # 🦠 **Szenario Pandemie** (Schöner formatiert)
-st.markdown("""<h3>🦠 Szenario: Pandemie</h3>
+except Exception as e:
+    st.error(f"❌ Fehler beim Laden der Excel-Datei: {str(e)}")
+    st.stop()  # Programm an dieser Stelle beenden, falls ein Fehler auftritt
+
+# 🦠 **Szenario Pandemie** (Schöner formatiert)
+st.markdown("""
+    <h3>🦠 Szenario: Pandemie</h3>
     <p style="font-size:18px; line-height:1.6;">
     Ein Krankenhaus erlebt eine massive Zunahme an Patienten aufgrund einer <b>hochansteckenden Atemwegserkrankung</b>, 
     die sich zu einer <b>Pandemie</b> ausgeweitet hat. Bei manchen Patienten löst die Krankheit einen 
@@ -64,8 +69,9 @@ st.markdown("""<h3>🦠 Szenario: Pandemie</h3>
     die die Pflege von erkrankten Patienten sicherstellen. Dazu können kurzzeitig andere Flächen umgenutzt werden.
     </p>
     """, unsafe_allow_html=True)
-  
-  # ✅ **Vergleich der Tabellenblätter mit einer Referenz (3 oder 6)**
+
+# ✅ **Vergleich der Tabellenblätter mit einer Referenz (3 oder 6)**
+try:
     if "3" in sheets.keys() and "6" in sheets.keys():
         st.subheader("🔎 Wählen Sie ein Referenztabellenblatt (3 oder 6)")
 
@@ -116,9 +122,8 @@ st.markdown("""<h3>🦠 Szenario: Pandemie</h3>
 
         else:
             st.warning("⚠️ Kein weiteres Tabellenblatt ausgewählt, das mit der Referenz verglichen werden kann.")
-
 except Exception as e:
-    st.error(f"❌ Fehler beim Laden der Excel-Datei: {str(e)}")
+    st.error(f"❌ Fehler beim Vergleich der Tabellenblätter: {str(e)}")
 
 # 📊 **Vergleichsmöglichkeit für alle ausgewählten Tabellenblätter**
 if selected_sheets:
@@ -136,5 +141,4 @@ if selected_sheets:
         st.subheader("📊 Vergleich der gewählten Spalten")
         combined_data = pd.concat([sheets[sheet][compare_options] for sheet in selected_sheets], ignore_index=True)
         st.dataframe(combined_data, use_container_width=True, height=600)
-
 
