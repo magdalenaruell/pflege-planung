@@ -16,51 +16,41 @@ sheet_name = "Paulina"
 df = pd.read_excel(xls, sheet_name=sheet_name)
 
 
-# ✅ Nur Spalten mit **dreistelligen** IDs für die Auswahl filtern
+ # Spaltennamen bereinigen (entfernt "Unnamed" Spaltennamen)
+    df.columns = [f"Spalte_{i}" if "Unnamed" in str(col) else col for i, col in enumerate(df.columns)]
+
+    # ✅ **Filtern nur dreistelliger IDs für die Auswahl**
     dreistellige_spalten = [col for col in df.columns if col.replace('.', '').isdigit() and len(col.replace('.', '')) == 3]
 
-# 🔹 Auswahl der Teilstellen (nur dreistellige IDs)
-st.subheader("📌 Wählen Sie die dreistelligen Teilstellen")
-selected_part_areas = st.multiselect("🔍 Verfügbare Teilstellen:", dreistellige_spalten)
+    # 🔹 Auswahl der Teilstellen (nur dreistellige IDs)
+    st.subheader("📌 Wählen Sie die dreistelligen Teilstellen")
+    selected_part_areas = st.multiselect("🔍 Verfügbare Teilstellen:", dreistellige_spalten)
 
-if selected_part_areas:
-# 🔹 Filtere das DataFrame nur für die gewählten dreistelligen Teilstellen
-selected_df = df[selected_part_areas]
-st.subheader("✅ Ausgewählte Teilstellen")
-st.dataframe(selected_df, use_container_width=True)
+    if selected_part_areas:
+        # 🔹 Filtere das DataFrame nur für die gewählten dreistelligen Teilstellen
+        selected_df = df[selected_part_areas]
+        st.subheader("✅ Ausgewählte Teilstellen")
+        st.dataframe(selected_df, use_container_width=True)
 
-# 🔹 Finde dazugehörige **sechsstellige Räume**
-sechsstellige_spalten = [col for col in df.columns if col.replace('.', '').isdigit() and len(col.replace('.', '')) == 6]
-matched_rooms = {}
+        # 🔹 Finde dazugehörige **sechsstellige Räume**
+        sechsstellige_spalten = [col for col in df.columns if col.replace('.', '').isdigit() and len(col.replace('.', '')) == 6]
+        matched_rooms = {}
 
-for part_area in selected_part_areas:
-# Suche alle sechsstelligen Räume, die mit der dreistelligen ID beginnen
-related_rooms = [col for col in sechsstellige_spalten if col.startswith(part_area)]
-if related_rooms:
-matched_rooms[part_area] = related_rooms
+        for part_area in selected_part_areas:
+            # Suche alle sechsstelligen Räume, die mit der dreistelligen ID beginnen
+            related_rooms = [col for col in sechsstellige_spalten if col.startswith(part_area)]
+            if related_rooms:
+                matched_rooms[part_area] = related_rooms
 
-# 🔹 Zeige die Räume als separate Tabellen
-if matched_rooms:
-st.subheader("🏠 Zugehörige Räume der ausgewählten Teilstellen")
-for part_area, rooms in matched_rooms.items():
-st.markdown(f"### 🏥 Räume für Teilstelle **{part_area}**")
-st.dataframe(df[rooms], use_container_width=True)
-                    
-# Ersetze Unnamed-Spalten durch etwas Lesbares
-df.columns = [f"Spalte_{i}" if "Unnamed" in str(col) else col for i, col in enumerate(df.columns)]
+        # 🔹 Zeige die Räume als separate Tabellen
+        if matched_rooms:
+            st.subheader("🏠 Zugehörige Räume der ausgewählten Teilstellen")
+            for part_area, rooms in matched_rooms.items():
+                st.markdown(f"### 🏥 Räume für Teilstelle **{part_area}**")
+                st.dataframe(df[rooms], use_container_width=True)
 
-# Tabelle anzeigen mit Zeilenauswahl
-st.subheader("Wählen Sie die in Ihrer Einrichtung vorhandenen Funktionsbereiche und Teilstellen")
-selected_rows = st.data_editor(df, height=500, num_rows="dynamic")
-
-# Anzeige der ausgewählten Zeilen
-st.subheader("Ausgewählte Zeilen")
-st.write(selected_rows)
-
-# Auswahl optionale Datenzugabe 
-
-# Szenario Pandemie
-st.markdown("""
+    # 🦠 **Szenario Pandemie** (Schöner formatiert)
+    st.markdown("""
         <h3>🦠 Szenario: Pandemie</h3>
         <p style="font-size:18px; line-height:1.6;">
         Ein Krankenhaus erlebt eine massive Zunahme an Patienten aufgrund einer <b>hochansteckenden Atemwegserkrankung</b>, 
@@ -80,6 +70,12 @@ st.markdown("""
         die die Pflege von erkrankten Patienten sicherstellen. Dazu können kurzzeitig andere Flächen umgenutzt werden.
         </p>
         """, unsafe_allow_html=True)
+
+    # 📊 **Vergleichsmöglichkeit**
+    st.subheader("📊 Wählen Sie die Teilstellen, die Sie vergleichen möchten")
+    compare_options = st.multiselect("🔍 Teilstellen auswählen:", df.columns)
+    if compare_options:
+        st.write(df[compare_options])
 
 # Button Szenarioergebnisse darstellen
 
