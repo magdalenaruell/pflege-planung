@@ -29,7 +29,26 @@ st.write(selected_rows)
 # Auswahl optionale Datenzugabe 
 
 # Szenario Pandemie
-st.text("Ein Krankenhaus erlebt eine massive Zunahme an Patienten aufgrund einer hochansteckenden Atemwegserkrankung  die sich zu einer Pandemie ausgeweitet hat. Bei manchen Patienten löst die Krankheit einen milden Symptomverlauf aus, bei anderen einen schwerwiegenden. Einige dieser Patienten benötigen intensivmedizinische Betreuung, während andere mit leichteren Symptomen isoliert werden müssen, um eine weitere Verbreitung der Krankheit zu verhindern. Gleichzeitig müssen weiterhin Patienten mit anderen Erkrankungen versorgt werden, wie Unfallopfer, Herzinfarkt- oder Krebspatienten, die ebenfalls auf lebenswichtige Behandlungen angewiesen sind. Durch die Pandemie erhöht sich der Bedarf an Flächen der Intensivmedizin (2.03) und der Isolationskrankenpflege (2.06). Um eine ausreichende Versorgung zu schaffen müssen kurzfristig und übergangsweise neue Fläche zur Verfügung gestellt werden, die die Pflege von erkrankten Patienten sicherstellt, dazu können kurzzeitig andere Flächen umgenutzt werden.")
+st.markdown("""
+        <h3>🦠 Szenario: Pandemie</h3>
+        <p style="font-size:18px; line-height:1.6;">
+        Ein Krankenhaus erlebt eine massive Zunahme an Patienten aufgrund einer <b>hochansteckenden Atemwegserkrankung</b>, 
+        die sich zu einer <b>Pandemie</b> ausgeweitet hat. Bei manchen Patienten löst die Krankheit einen 
+        <span style="color:green;"><b>milden Verlauf</b></span> aus, bei anderen einen <span style="color:red;"><b>schwerwiegenden</b></span>.
+        </p>
+        
+        <p style="font-size:18px;">
+        Einige dieser Patienten benötigen <b>intensivmedizinische Betreuung</b>, während andere mit leichteren Symptomen isoliert werden müssen, 
+        um eine weitere Verbreitung der Krankheit zu verhindern. Gleichzeitig müssen weiterhin Patienten mit anderen Erkrankungen versorgt werden, 
+        wie <b>Unfallopfer, Herzinfarkt- oder Krebspatienten</b>, die ebenfalls auf lebenswichtige Behandlungen angewiesen sind.
+        </p>
+        
+        <p style="font-size:18px;">
+        Durch die Pandemie erhöht sich der Bedarf an Flächen der <b>Intensivmedizin (2.03)</b> und der <b>Isolationskrankenpflege (2.06)</b>. 
+        Um eine ausreichende Versorgung zu schaffen, müssen kurzfristig und übergangsweise neue Flächen zur Verfügung gestellt werden, 
+        die die Pflege von erkrankten Patienten sicherstellen. Dazu können kurzzeitig andere Flächen umgenutzt werden.
+        </p>
+        """, unsafe_allow_html=True)
 
 # Button Szenarioergebnisse darstellen
 
@@ -37,4 +56,3 @@ st.text("Ein Krankenhaus erlebt eine massive Zunahme an Patienten aufgrund einer
 
 # Vergleichsmöglichkeit 
 st.subheader ("Wählen Sie die Teilstellen, die Sie Vergleichen möchten")
-
