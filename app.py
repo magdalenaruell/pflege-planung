@@ -20,7 +20,7 @@ else:
     except Exception as e:
         st.error(f"❌ Fehler beim Laden der Standarddatei: {str(e)}")
         st.stop()
-        
+
 # ✅ **Lese alle Tabellenblätter aus der gewählten Datei**
 try:
     sheets = pd.read_excel(xls, sheet_name=None)  # `None` lädt alle Tabellenblätter
@@ -45,9 +45,9 @@ try:
     # Lade das ausgewählte Tabellenblatt als DataFrame
     df_filtered = sheets[st.session_state.selected_sheet]
 
-    # Zeige die ersten Zeilen des gewählten Tabellenblatts
-    st.subheader(f"📄 Zeilen aus {st.session_state.selected_sheet}")
-    st.dataframe(df_filtered.head(), use_container_width=True)
+    # Zeige alle Zeilen des gewählten Tabellenblatts
+    st.subheader(f"📄 Alle Daten aus {st.session_state.selected_sheet}")
+    st.dataframe(df_filtered, use_container_width=True, height=600)  # Scrollbare Tabelle
 
 except Exception as e:
     st.error(f"❌ Fehler beim Laden der Excel-Datei: {str(e)}")
@@ -80,5 +80,6 @@ compare_options = st.multiselect("🔍 Spalten auswählen:", df_filtered.columns
 
 if compare_options:
     st.subheader("📊 Vergleich der gewählten Spalten")
-    st.dataframe(df_filtered[compare_options], use_container_width=True)
+    st.dataframe(df_filtered[compare_options], use_container_width=True, height=600)
+
 
