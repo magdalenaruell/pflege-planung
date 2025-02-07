@@ -6,8 +6,7 @@ st.title("🏥 Krankenhaus-Planungstabelle")
 
 # 📂 Datei-Upload oder Fallback auf feste Datei
 uploaded_file = st.file_uploader("📂 Laden Sie eine Excel-Datei hoch oder verwenden Sie die Standarddatei", type=["xlsx"])
-file_path = "WebAnwendung_250128_NBO_DIN3.xlsx"  # Fallback-Datei
-file.path = "01_WebAnwendung_250128_NBO_DIN.xlsx" 
+file_path = "Allin13_WebAnwendung_250128_NBO_DIN.xlsx"  # Fallback-Datei
 
 if uploaded_file is not None:
     # Wenn eine Datei hochgeladen wurde, verwende sie
@@ -21,7 +20,12 @@ else:
     except Exception as e:
         st.error(f"❌ Fehler beim Laden der Standarddatei: {str(e)}")
         st.stop()
-
+        
+# Jedes Tabellenblatt in ein eigenes DataFrame umwandeln
+for sheet_name, df in sheets.items():
+    print(f"📄 Tabellenblatt: {sheet_name}")
+    print(df.head())  # Erste Zeilen anzeigen
+    
 # Wähle das Tabellenblatt
 sheet_name = "Paulina"
 df = pd.read_excel(xls, sheet_name=sheet_name)
