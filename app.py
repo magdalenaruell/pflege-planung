@@ -7,6 +7,7 @@ st.title("🏥 Krankenhaus-Planungstabelle")
 # 📂 Datei-Upload oder Fallback auf feste Datei
 uploaded_file = st.file_uploader("📂 Laden Sie eine Excel-Datei hoch oder verwenden Sie die Standarddatei", type=["xlsx"])
 file_path = "WebAnwendung_250128_NBO_DIN3.xlsx"  # Fallback-Datei
+file.path = "01_WebAnwendung_250128_NBO_DIN.xlsx" 
 
 if uploaded_file is not None:
     # Wenn eine Datei hochgeladen wurde, verwende sie
