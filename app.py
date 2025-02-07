@@ -15,6 +15,39 @@ df = pd.read_excel(file_path, engine="openpyxl")
 sheet_name = "Paulina"
 df = pd.read_excel(xls, sheet_name=sheet_name)
 
+ # Spaltennamen bereinigen
+    df.columns = [col if "Unnamed" not in str(col) else f"Spalte_{i}" for i, col in enumerate(df.columns)]
+
+    # ✅ Nur Spalten mit **dreistelligen** IDs für die Auswahl filtern
+    dreistellige_spalten = [col for col in df.columns if col.replace('.', '').isdigit() and len(col.replace('.', '')) == 3]
+
+    # 🔹 Auswahl der Teilstellen (nur dreistellige IDs)
+    st.subheader("📌 Wählen Sie die dreistelligen Teilstellen")
+    selected_part_areas = st.multiselect("🔍 Verfügbare Teilstellen:", dreistellige_spalten)
+
+    if selected_part_areas:
+        # 🔹 Filtere das DataFrame nur für die gewählten dreistelligen Teilstellen
+        selected_df = df[selected_part_areas]
+        st.subheader("✅ Ausgewählte Teilstellen")
+        st.dataframe(selected_df, use_container_width=True)
+
+        # 🔹 Finde dazugehörige **sechsstellige Räume**
+        sechsstellige_spalten = [col for col in df.columns if col.replace('.', '').isdigit() and len(col.replace('.', '')) == 6]
+        matched_rooms = {}
+
+        for part_area in selected_part_areas:
+            # Suche alle sechsstelligen Räume, die mit der dreistelligen ID beginnen
+            related_rooms = [col for col in sechsstellige_spalten if col.startswith(part_area)]
+            if related_rooms:
+                matched_rooms[part_area] = related_rooms
+
+        # 🔹 Zeige die Räume als separate Tabellen
+        if matched_rooms:
+            st.subheader("🏠 Zugehörige Räume der ausgewählten Teilstellen")
+            for part_area, rooms in matched_rooms.items():
+                st.markdown(f"### 🏥 Räume für Teilstelle **{part_area}**")
+                st.dataframe(df[rooms], use_container_width=True)
+                    
 # Ersetze Unnamed-Spalten durch etwas Lesbares
 df.columns = [f"Spalte_{i}" if "Unnamed" in str(col) else col for i, col in enumerate(df.columns)]
 
