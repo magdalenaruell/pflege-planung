@@ -56,3 +56,6 @@ st.markdown("""
 
 # Vergleichsmöglichkeit 
 st.subheader ("Wählen Sie die Teilstellen, die Sie Vergleichen möchten")
+compare_options = st.multiselect("Wählen Sie die Teilstellen, die Sie vergleichen möchten", df.columns)
+if compare_options:
+    st.write(df[compare_options])
