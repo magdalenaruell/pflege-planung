@@ -21,13 +21,28 @@ else:
         st.error(f"❌ Fehler beim Laden der Standarddatei: {str(e)}")
         st.stop()
         
+# ✅ **Lese alle Tabellenblätter aus der gewählten Datei**
 try:
-    sheets = pd.read_excel(file_path, sheet_name=None)  # `None` lädt alle Tabellenblätter
-    for sheet_name, df in sheets.items():
-        print(f"📄 Lade Tabellenblatt: {sheet.name}")
-        print(df.head())  # Zeige die ersten Zeilen an
+    sheets = pd.read_excel(xls, sheet_name=None)  # `None` lädt alle Tabellenblätter
+    
+    if not sheets:  # Falls die Datei leer ist
+        st.error("❌ Die Excel-Datei enthält keine Tabellenblätter.")
+        st.stop()
+    
+    # Zeige alle geladenen Tabellenblätter
+    st.subheader("📄 Verfügbare Tabellenblätter")
+    sheet_names = list(sheets.keys())
+    selected_sheet = st.selectbox("🔍 Wählen Sie ein Tabellenblatt:", sheet_names)
+    
+    # Lade das ausgewählte Tabellenblatt als DataFrame
+    df_filtered = sheets[selected_sheet]
+
+    # Zeige die ersten Zeilen des gewählten Tabellenblatts
+    st.subheader(f"📄 Zeilen aus {selected_sheet}")
+    st.dataframe(df_filtered.head(), use_container_width=True)
+
 except Exception as e:
-    print(f"❌ Fehler beim Laden der Excel-Datei: {str(e)}")
+    st.error(f"❌ Fehler beim Laden der Excel-Datei: {str(e)}")
 
 # 🦠 **Szenario Pandemie** (Schöner formatiert)
 st.markdown("""
@@ -52,9 +67,9 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # 📊 **Vergleichsmöglichkeit**
-st.subheader("📊 Wählen Sie die Teilstellen, die Sie vergleichen möchten")
-compare_options = st.multiselect("🔍 Teilstellen auswählen:", df_filtered.columns)
+st.subheader("📊 Wählen Sie die Spalten, die Sie vergleichen möchten")
+compare_options = st.multiselect("🔍 Spalten auswählen:", df_filtered.columns)
 
 if compare_options:
-    st.subheader("📊 Vergleich der gewählten Teilstellen")
+    st.subheader("📊 Vergleich der gewählten Spalten")
     st.dataframe(df_filtered[compare_options], use_container_width=True)
