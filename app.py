@@ -25,22 +25,6 @@ else:
 for sheet_name, df in sheets.items():
     print(f"📄 Tabellenblatt: {sheet_name}")
     print(df.head())  # Erste Zeilen anzeigen
-    
-# Wähle das Tabellenblatt
-sheet_name = "Paulina"
-df = pd.read_excel(xls, sheet_name=sheet_name)
-
-# Spaltennamen bereinigen (entfernt "Unnamed" Spaltennamen)
-df.columns = [f"Spalte_{i}" if "Unnamed" in str(col) else col for i, col in enumerate(df.columns)]
-
-# ✅ **Prüfen, ob eine "ID"-Spalte vorhanden ist**
-if "ID" not in df.columns:
-    st.error("❌ Die Spalte 'ID' wurde nicht gefunden. Bitte prüfen Sie die Datei.")
-    st.stop()
-
-# ✅ **Nur Zeilen mit erlaubten Werten in der "ID"-Spalte auswählen**
-erlaubte_werte = ["2.01", "2.02", "2.03", "2.04", "2.05", "2.06", "2.07", "2.08", "2.09", "2.10", "2.11", "2.12", "2.13", "2.14"]
-df_filtered = df[df["ID"].astype(str).isin(erlaubte_werte)]
 
 # 🔹 Auswahl der ID-Werte
 st.subheader("📌 Wählen Sie eine ID")
