@@ -29,16 +29,24 @@ try:
         st.error("❌ Die Excel-Datei enthält keine Tabellenblätter.")
         st.stop()
     
-    # Zeige alle geladenen Tabellenblätter
-    st.subheader("📄 Verfügbare Tabellenblätter")
-    sheet_names = list(sheets.keys())
-    selected_sheet = st.selectbox("🔍 Wählen Sie ein Tabellenblatt:", sheet_names)
+    # Zeige alle verfügbaren Tabellenblätter als Buttons nebeneinander
+    st.subheader("📄 Wählen Sie ein Tabellenblatt:")
     
+    # **Speichere die Auswahl mit Session-State**
+    if "selected_sheet" not in st.session_state:
+        st.session_state.selected_sheet = list(sheets.keys())[0]  # Standardwert: Erstes Blatt
+
+    cols = st.columns(len(sheets))  # Erzeuge Spalten für die Buttons
+
+    for i, sheet in enumerate(sheets.keys()):
+        if cols[i].button(sheet):  # Falls der Button geklickt wird, setze das Blatt
+            st.session_state.selected_sheet = sheet
+
     # Lade das ausgewählte Tabellenblatt als DataFrame
-    df_filtered = sheets[selected_sheet]
+    df_filtered = sheets[st.session_state.selected_sheet]
 
     # Zeige die ersten Zeilen des gewählten Tabellenblatts
-    st.subheader(f"📄 Zeilen aus {selected_sheet}")
+    st.subheader(f"📄 Zeilen aus {st.session_state.selected_sheet}")
     st.dataframe(df_filtered.head(), use_container_width=True)
 
 except Exception as e:
@@ -73,3 +81,4 @@ compare_options = st.multiselect("🔍 Spalten auswählen:", df_filtered.columns
 if compare_options:
     st.subheader("📊 Vergleich der gewählten Spalten")
     st.dataframe(df_filtered[compare_options], use_container_width=True)
+
