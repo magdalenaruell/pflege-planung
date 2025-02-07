@@ -4,19 +4,15 @@ import pandas as pd
 # Titel der Anwendung
 st.title("Krankenhaus-Planungstabelle")
 
-# Datei laden
-file_path = "WebAnwendung_250128_NBO_DIN.xlsx"
+# Datei hochladen
+uploaded_file = st.file_uploader("📂 Laden Sie eine Excel-Datei hoch", type=["xlsx"])
 
-# Excel Datei einlesen
-xls = pd.ExcelFile(file_path)
-df = pd.read_excel(file_path, engine="openpyxl")
+if uploaded_file is not None:
+    xls = pd.ExcelFile(uploaded_file)
+    sheet_name = "Paulina"
+    df = pd.read_excel(xls, sheet_name=sheet_name)
 
-# Festes Tabellenblatt wählen
-sheet_name = "Paulina"
-df = pd.read_excel(xls, sheet_name=sheet_name)
-
-
- # Spaltennamen bereinigen (entfernt "Unnamed" Spaltennamen)
+    # Spaltennamen bereinigen (entfernt "Unnamed" Spaltennamen)
     df.columns = [f"Spalte_{i}" if "Unnamed" in str(col) else col for i, col in enumerate(df.columns)]
 
     # ✅ **Filtern nur dreistelliger IDs für die Auswahl**
@@ -70,6 +66,12 @@ df = pd.read_excel(xls, sheet_name=sheet_name)
         die die Pflege von erkrankten Patienten sicherstellen. Dazu können kurzzeitig andere Flächen umgenutzt werden.
         </p>
         """, unsafe_allow_html=True)
+
+    # 📊 **Vergleichsmöglichkeit**
+    st.subheader("📊 Wählen Sie die Teilstellen, die Sie vergleichen möchten")
+    compare_options = st.multiselect("🔍 Teilstellen auswählen:", df.columns)
+    if compare_options:
+        st.write(df[compare_options])
 
     # 📊 **Vergleichsmöglichkeit**
     st.subheader("📊 Wählen Sie die Teilstellen, die Sie vergleichen möchten")
