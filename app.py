@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Titel der Anwendung
-st.title("Krankenhaus-Planungstabelle")
+st.title("🏥 Krankenhaus-Planungstabelle")
 
 # 📂 Datei-Upload oder Fallback auf feste Datei
 uploaded_file = st.file_uploader("📂 Laden Sie eine Excel-Datei hoch oder verwenden Sie die Standarddatei", type=["xlsx"])
@@ -28,8 +28,16 @@ df = pd.read_excel(xls, sheet_name=sheet_name)
 # Spaltennamen bereinigen (entfernt "Unnamed" Spaltennamen)
 df.columns = [f"Spalte_{i}" if "Unnamed" in str(col) else col for i, col in enumerate(df.columns)]
 
+# ✅ **Prüfen, ob eine "ID"-Spalte vorhanden ist**
+if "ID" not in df.columns:
+    st.error("❌ Die Spalte 'ID' wurde nicht gefunden. Bitte prüfen Sie die Datei.")
+    st.stop()
+
+# ✅ **Nur Zeilen mit einer gültigen 'ID' auswählen**
+df_filtered = df[df["ID"].notna()]
+
 # ✅ **Nur dreistellige IDs für die Auswahl filtern**
-dreistellige_spalten = [col for col in df.columns if col.replace('.', '').isdigit() and len(col.replace('.', '')) == 3]
+dreistellige_spalten = [col for col in df_filtered.columns if col.replace('.', '').isdigit() and len(col.replace('.', '')) == 3]
 
 # 🔹 Auswahl der Teilstellen (nur dreistellige IDs)
 st.subheader("📌 Wählen Sie die dreistelligen Teilstellen")
@@ -37,12 +45,12 @@ selected_part_areas = st.multiselect("🔍 Verfügbare Teilstellen:", dreistelli
 
 if selected_part_areas:
     # 🔹 Filtere das DataFrame nur für die gewählten dreistelligen Teilstellen
-    selected_df = df[selected_part_areas]
+    selected_df = df_filtered[selected_part_areas]
     st.subheader("✅ Ausgewählte Teilstellen")
     st.dataframe(selected_df, use_container_width=True)
 
     # 🔹 Finde dazugehörige **sechsstellige Räume**
-    sechsstellige_spalten = [col for col in df.columns if col.replace('.', '').isdigit() and len(col.replace('.', '')) == 6]
+    sechsstellige_spalten = [col for col in df_filtered.columns if col.replace('.', '').isdigit() and len(col.replace('.', '')) == 6]
     matched_rooms = {}
 
     for part_area in selected_part_areas:
@@ -56,7 +64,7 @@ if selected_part_areas:
         st.subheader("🏠 Zugehörige Räume der ausgewählten Teilstellen")
         for part_area, rooms in matched_rooms.items():
             st.markdown(f"### 🏥 Räume für Teilstelle **{part_area}**")
-            st.dataframe(df[rooms], use_container_width=True)
+            st.dataframe(df_filtered[rooms], use_container_width=True)
 
 # 🦠 **Szenario Pandemie** (Schöner formatiert)
 st.markdown("""
@@ -82,15 +90,6 @@ st.markdown("""
 
 # 📊 **Vergleichsmöglichkeit**
 st.subheader("📊 Wählen Sie die Teilstellen, die Sie vergleichen möchten")
-compare_options = st.multiselect("🔍 Teilstellen auswählen:", df.columns)
+compare_options = st.multiselect("🔍 Teilstellen auswählen:", df_filtered.columns)
 if compare_options:
-    st.write(df[compare_options])
-# Button Szenarioergebnisse darstellen
-
-# Ergebnisdarstellung als blanker Text 
-
-# Vergleichsmöglichkeit 
-st.subheader ("Wählen Sie die Teilstellen, die Sie Vergleichen möchten")
-compare_options = st.multiselect("Wählen Sie die Teilstellen, die Sie vergleichen möchten", df.columns)
-if compare_options:
-    st.write(df[compare_options])
+    st.write(df_filtered[compare_options])
