@@ -21,15 +21,13 @@ else:
         st.error(f"❌ Fehler beim Laden der Standarddatei: {str(e)}")
         st.stop()
         
-# Jedes Tabellenblatt in ein eigenes DataFrame umwandeln
-for sheet_name, df in sheets.items():
-    print(f"📄 Tabellenblatt: {1}")
-    print(1)  # Erste Zeilen anzeigen
-
-    print(f"📄 Tabellenblatt: {2}")
-    print(df.head())  # Erste Zeilen anzeigen
-
-
+try:
+    sheets = pd.read_excel(file_path, sheet_name=None)  # `None` lädt alle Tabellenblätter
+    for sheet_name, df in sheets.items():
+        print(f"📄 Lade Tabellenblatt: {sheet_name}")
+        print(df.head())  # Zeige die ersten Zeilen an
+except Exception as e:
+    print(f"❌ Fehler beim Laden der Excel-Datei: {str(e)}")
 
 # 🔹 Auswahl der ID-Werte
 st.subheader("📌 Wählen Sie eine ID")
