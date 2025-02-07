@@ -45,8 +45,7 @@ try:
             st.dataframe(df_filtered, use_container_width=True, height=600)  
 
    # 🦠 **Szenario Pandemie** (Schöner formatiert)
-st.markdown("""
-    <h3>🦠 Szenario: Pandemie</h3>
+st.markdown("""<h3>🦠 Szenario: Pandemie</h3>
     <p style="font-size:18px; line-height:1.6;">
     Ein Krankenhaus erlebt eine massive Zunahme an Patienten aufgrund einer <b>hochansteckenden Atemwegserkrankung</b>, 
     die sich zu einer <b>Pandemie</b> ausgeweitet hat. Bei manchen Patienten löst die Krankheit einen 
