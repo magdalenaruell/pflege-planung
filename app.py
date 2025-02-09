@@ -68,7 +68,7 @@ try:
         st.stop()
     
     # Zeige alle verfügbaren Tabellenblätter als Multi-Select
-    st.subheader("📄 Wählen Sie die Tabellenblätter aus:")
+    st.subheader("📄 Wählen Sie die in Ihrer Einrichtung vorhandenen Teilstellen aus")
     
     if "selected_sheets" not in st.session_state:
         st.session_state.selected_sheets = []  
@@ -93,7 +93,7 @@ except Exception as e:
 # ✅ **Vergleich der Tabellenblätter mit einer Referenz (3 oder 6)**
 try:
     if "3" in sheets.keys() and "6" in sheets.keys():
-        st.subheader("🔎 Wählen Sie ein Referenztabellenblatt (3 oder 6)")
+        st.subheader("🔎 Wählen Sie ein Referenzteilstelle aus")
 
         reference_sheet = st.selectbox("📌 Referenztabellenblatt wählen:", ["3", "6"])
 
@@ -101,7 +101,7 @@ try:
         available_comparison_sheets = [s for s in selected_sheets if s not in ["3", "6"]]
 
         if available_comparison_sheets:
-            compare_sheet = st.selectbox("📊 Wählen Sie ein Tabellenblatt für den Vergleich:", available_comparison_sheets)
+            compare_sheet = st.selectbox("📊 Wählen Sie ein Teilstelle für den Vergleich:", available_comparison_sheets)
 
             # Lade die beiden zu vergleichenden Tabellenblätter
             df_reference = sheets[reference_sheet]
