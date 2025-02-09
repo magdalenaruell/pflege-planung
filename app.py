@@ -69,17 +69,22 @@ if not selected_sheets:
     st.warning("⚠️ Bitte wählen Sie mindestens ein Tabellenblatt aus.")
     st.stop()
 
+
 # ✅ **Nur die ausgewählten Tabellenblätter anzeigen & Daten sammeln**
 dataframes = {}
 
 for sheet in selected_sheets:
     try:
         df = pd.read_excel(xls, sheet_name=sheet)
-        dataframes[sheet] = df
-        st.subheader(f"📄 Daten aus: {sheet}")
-        st.dataframe(df, use_container_width=True, height=400)  # Höhe reduziert für bessere Übersicht
+        dataframes[sheet] = df  # **Speichert nur die ausgewählten Tabellen**
     except Exception as e:
         st.error(f"❌ Fehler beim Laden des Tabellenblatts '{sheet}': {str(e)}")
+
+# **Jetzt wirklich nur die ausgewählten Blätter anzeigen**
+for sheet, df in dataframes.items():
+    st.subheader(f"📄 Daten aus: {sheet}")
+    st.dataframe(df, use_container_width=True, height=400)  # **Zeigt nur ausgewählte Blätter!**
+
 
 # 🔎 **Vergleich der Tabellenblätter auf Basis von Spalte B (2. Spalte)**
 if len(selected_sheets) >= 2:
