@@ -44,6 +44,7 @@ st.markdown("""
     </p>
     """, unsafe_allow_html=True)
 
+
 # 📂 Standard-Excel-Datei laden
 file_path = "Allin13_WebAnwendung_250128_NBO_DIN.xlsx"
 
@@ -69,38 +70,31 @@ if not selected_sheets:
     st.warning("⚠️ Bitte wählen Sie mindestens ein Tabellenblatt aus.")
     st.stop()
 
-# ✅ **Nur die ausgewählten Tabellenblätter separat anzeigen & vergleichen**
-dataframes = {}
-
+# ✅ **Nur die ausgewählten Tabellenblätter EINZELN anzeigen**
 for sheet in selected_sheets:
     try:
         df = pd.read_excel(xls, sheet_name=sheet)
-        dataframes[sheet] = df  # Speichert nur die ausgewählten Tabellen
+        st.subheader(f"📄 Daten aus: {sheet}")  # **Nur das gewählte Tabellenblatt anzeigen**
+        st.dataframe(df, use_container_width=True, height=400)  # **Kein Mischen mit anderen Blättern**
     except Exception as e:
         st.error(f"❌ Fehler beim Laden des Tabellenblatts '{sheet}': {str(e)}")
-
-# **Jetzt wirklich nur die ausgewählten Blätter einzeln anzeigen**
-for sheet, df in dataframes.items():
-    st.subheader(f"📄 Daten aus: {sheet}")  # **Jedes Blatt wird separat betitelt**
-    st.dataframe(df, use_container_width=True, height=400)  # **Zeigt nur das jeweilige Blatt**
 
 # 🔎 **Vergleich der Tabellenblätter auf Basis von Spalte B (2. Spalte)**
 if len(selected_sheets) >= 2:
     st.subheader("📊 Vergleich der ausgewählten Tabellenblätter nach Spalte B")
 
-    # Jedes Tabellenblatt bleibt für sich – KEIN Zusammenfügen!
     comparison_results = []
-    for sheet, df in dataframes.items():
-        if df.shape[1] > 1:  # Sicherstellen, dass mindestens zwei Spalten existieren
-            df = df.iloc[:, :].copy()  # Kopie, um Änderungen zu vermeiden
-
+    
+    for sheet in selected_sheets:
+        try:
+            df = pd.read_excel(xls, sheet_name=sheet)
+            
             # Falls Spalte B fehlt, stoppen
             if df.shape[1] < 2:
                 st.error(f"❌ Spalte B fehlt in '{sheet}'. Überprüfen Sie das Tabellenblatt.")
                 continue
 
             column_b = df.columns[1]  # **Jetzt wird explizit Spalte B (Index 1) genommen**
-
             grouped = df.groupby(column_b)
 
             for title, group in grouped:
@@ -119,6 +113,9 @@ if len(selected_sheets) >= 2:
                 match_status = "✅" if all("background-color: #90EE90;" in s for s in row_styles) else "🟠" if any("background-color: #FF4500;" in s for s in row_styles) else "🔴"
 
                 comparison_results.append((match_status, title, row_styles))
+
+        except Exception as e:
+            st.error(f"❌ Fehler beim Vergleich des Tabellenblatts '{sheet}': {str(e)}")
 
     # **Ergebnisse formatieren und anzeigen**
     if comparison_results:
