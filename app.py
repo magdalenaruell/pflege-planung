@@ -69,91 +69,72 @@ if not selected_sheets:
     st.warning("⚠️ Bitte wählen Sie mindestens ein Tabellenblatt aus.")
     st.stop()
 
-# ✅ **Nur die ausgewählten Tabellenblätter anzeigen & Daten sammeln**
+# ✅ **Nur die ausgewählten Tabellenblätter separat anzeigen & vergleichen**
 dataframes = {}
 
 for sheet in selected_sheets:
     try:
         df = pd.read_excel(xls, sheet_name=sheet)
-        dataframes[sheet] = df  # **Speichert nur die ausgewählten Tabellen**
+        dataframes[sheet] = df  # Speichert nur die ausgewählten Tabellen
     except Exception as e:
         st.error(f"❌ Fehler beim Laden des Tabellenblatts '{sheet}': {str(e)}")
 
-# **Jetzt wirklich nur die ausgewählten Blätter anzeigen**
+# **Jetzt wirklich nur die ausgewählten Blätter einzeln anzeigen**
 for sheet, df in dataframes.items():
-    st.subheader(f"📄 Daten aus: {sheet}")
-    st.dataframe(df, use_container_width=True, height=400)  # **Zeigt nur ausgewählte Blätter!**
+    st.subheader(f"📄 Daten aus: {sheet}")  # **Jedes Blatt wird separat betitelt**
+    st.dataframe(df, use_container_width=True, height=400)  # **Zeigt nur das jeweilige Blatt**
 
 # 🔎 **Vergleich der Tabellenblätter auf Basis von Spalte B (2. Spalte)**
 if len(selected_sheets) >= 2:
     st.subheader("📊 Vergleich der ausgewählten Tabellenblätter nach Spalte B")
 
-    # **Nur die ausgewählten Tabellen kombinieren**
-    merged_data = []
+    # Jedes Tabellenblatt bleibt für sich – KEIN Zusammenfügen!
+    comparison_results = []
     for sheet, df in dataframes.items():
         if df.shape[1] > 1:  # Sicherstellen, dass mindestens zwei Spalten existieren
             df = df.iloc[:, :].copy()  # Kopie, um Änderungen zu vermeiden
-            df["Tabelle"] = sheet  # Tabellenblatt-Name hinzufügen
-            merged_data.append(df)
 
-    # **Nur die gewählten Tabellen werden zusammengeführt!**
-    merged_df = pd.concat(merged_data, ignore_index=True)
+            # Falls Spalte B fehlt, stoppen
+            if df.shape[1] < 2:
+                st.error(f"❌ Spalte B fehlt in '{sheet}'. Überprüfen Sie das Tabellenblatt.")
+                continue
 
-    # Sicherstellen, dass Spalte B existiert (2. Spalte, Index 1)
-    if merged_df.shape[1] < 2:
-        st.error("❌ Spalte B nicht gefunden. Überprüfe das Excel-Dokument.")
-        st.stop()
+            column_b = df.columns[1]  # **Jetzt wird explizit Spalte B (Index 1) genommen**
 
-    column_b = merged_df.columns[1]  # **Jetzt wird explizit Spalte B (Index 1) genommen**
+            grouped = df.groupby(column_b)
 
-    # Gruppiere nach Spalte B (Titel)
-    grouped = merged_df.groupby(column_b)
+            for title, group in grouped:
+                unique_rows = group.drop_duplicates().reset_index(drop=True)
 
-    comparison_results = []
-    for title, group in grouped:
-        unique_rows = group.drop_duplicates().reset_index(drop=True)
+                # Prüfe Übereinstimmungen Zelle für Zelle
+                row_styles = []
+                for col in unique_rows.columns[2:]:  # Ab Spalte 3
+                    if unique_rows[col].nunique() == 1:
+                        row_styles.append(f"<td style='background-color: #90EE90;'>{unique_rows[col].values[0]}</td>")  # Grün
+                    elif unique_rows[col].nunique() > 1:
+                        row_styles.append(f"<td style='background-color: #FF4500; font-weight:bold;'>{unique_rows[col].values[0]}</td>")  # Rot
+                    else:
+                        row_styles.append(f"<td>{unique_rows[col].values[0]}</td>")  # Standard
 
-        # Finde die gemeinsamen Spalten
-        common_columns = unique_rows.columns[2:]  # Ab Spalte 3
+                match_status = "✅" if all("background-color: #90EE90;" in s for s in row_styles) else "🟠" if any("background-color: #FF4500;" in s for s in row_styles) else "🔴"
 
-        # Prüfe Übereinstimmungen Zelle für Zelle
-        row_styles = []
-        for col in common_columns:
-            if unique_rows[col].nunique() == 1:
-                row_styles.append(f"<td style='background-color: #90EE90;'>{unique_rows[col].values[0]}</td>")  # Grün
-            elif unique_rows[col].nunique() > 1:
-                row_styles.append(f"<td style='background-color: #FF4500; font-weight:bold;'>{unique_rows[col].values[0]}</td>")  # Rot
-            else:
-                row_styles.append(f"<td>{unique_rows[col].values[0]}</td>")  # Standard
-
-        # Bestimme das Gesamtergebnis (Grün = alles gleich, Orange = teilweise, Rot = alles unterschiedlich)
-        if all("background-color: #90EE90;" in s for s in row_styles):
-            match_status = "✅"
-            color = "green"
-        elif any("background-color: #FF4500;" in s for s in row_styles):
-            match_status = "🟠"
-            color = "orange"
-        else:
-            match_status = "🔴"
-            color = "red"
-
-        comparison_results.append((match_status, title, row_styles, color))
+                comparison_results.append((match_status, title, row_styles))
 
     # **Ergebnisse formatieren und anzeigen**
-    styled_rows = []
-    for status, title, row_styles, color in comparison_results:
-        styled_row = f"<tr><td>{status}</td><td>{title}</td>{''.join(row_styles)}</tr>"
-        styled_rows.append(styled_row)
+    if comparison_results:
+        styled_rows = []
+        for status, title, row_styles in comparison_results:
+            styled_row = f"<tr><td>{status}</td><td>{title}</td>{''.join(row_styles)}</tr>"
+            styled_rows.append(styled_row)
 
-    table_html = f"""
-    <table class='compact-table'>
-        <tr>
-            <th>Vergleich</th>
-            <th>Titel (Spalte B)</th>
-            <th>Details</th>
-        </tr>
-        {''.join(styled_rows)}
-    </table>
-    """
-
-    st.markdown(table_html, unsafe_allow_html=True)
+        table_html = f"""
+        <table class='compact-table'>
+            <tr>
+                <th>Vergleich</th>
+                <th>Titel (Spalte B)</th>
+                <th>Details</th>
+            </tr>
+            {''.join(styled_rows)}
+        </table>
+        """
+        st.markdown(table_html, unsafe_allow_html=True)
