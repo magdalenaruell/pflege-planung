@@ -67,9 +67,6 @@ selected_sheet_name = st.selectbox("🔍 Wählen Sie ein Tabellenblatt:", sheet_
 
 df = pd.read_excel(xls, sheet_name=selected_sheet_name)
 
-# Lösche den vorherigen Inhalt, um nur das ausgewählte Tabellenblatt anzuzeigen
-st.experimental_rerun()
-
 st.subheader(f"📄 Daten aus: {selected_sheet_name}")
 st.dataframe(df, use_container_width=True, height=400)
 
