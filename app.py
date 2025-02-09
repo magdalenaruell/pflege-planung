@@ -46,7 +46,7 @@ st.markdown("""
 
 
 # 🔗 GitHub-Repository, in dem die Excel-Dateien liegen
-GITHUB_BASE_URL = "https://raw.githubusercontent.com/user/repository/main/"  # <-- ÄNDERE das Repo
+GITHUB_BASE_URL = "https://raw.githubusercontent.com/magdalenaruell/pflege-planung/main/"  # <-- ÄNDERE das Repo
 
 # 📂 Liste der Excel-Dateien im GitHub-Repo (MUSS manuell gepflegt werden oder mit einer API automatisiert werden)
 EXCEL_FILES = [
