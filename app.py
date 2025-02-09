@@ -77,7 +77,7 @@ for sheet in selected_sheets:
         df = pd.read_excel(xls, sheet_name=sheet)
         dataframes[sheet] = df
         st.subheader(f"📄 Daten aus: {sheet}")
-        st.dataframe(df, use_container_width=True, height=600)
+        st.dataframe(df, use_container_width=True, height=400)
     except Exception as e:
         st.error(f"❌ Fehler beim Laden des Tabellenblatts '{sheet}': {str(e)}")
 
