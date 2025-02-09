@@ -86,11 +86,11 @@ for sheet, df in dataframes.items():
     st.dataframe(df, use_container_width=True, height=400)  # **Zeigt nur ausgewählte Blätter!**
 
 
-# 🔎 **Vergleich der Tabellenblätter auf Basis von Spalte B (2. Spalte)**
+ 🔎 **Vergleich der Tabellenblätter auf Basis von Spalte B (2. Spalte)**
 if len(selected_sheets) >= 2:
     st.subheader("📊 Vergleich der ausgewählten Tabellenblätter nach Spalte B")
 
-    # Führe alle Tabellen zusammen basierend auf Spalte B (2. Spalte)
+    # **Nur die ausgewählten Tabellen kombinieren**
     merged_data = []
     for sheet, df in dataframes.items():
         if df.shape[1] > 1:  # Sicherstellen, dass mindestens zwei Spalten existieren
@@ -98,7 +98,7 @@ if len(selected_sheets) >= 2:
             df["Tabelle"] = sheet  # Tabellenblatt-Name hinzufügen
             merged_data.append(df)
 
-    # Zusammenführen der Daten (nur ausgewählte Blätter)
+    # **Nur die gewählten Tabellen werden zusammengeführt!**
     merged_df = pd.concat(merged_data, ignore_index=True)
 
     # Sicherstellen, dass Spalte B existiert (2. Spalte, Index 1)
@@ -106,7 +106,7 @@ if len(selected_sheets) >= 2:
         st.error("❌ Spalte B nicht gefunden. Überprüfe das Excel-Dokument.")
         st.stop()
 
-    column_b = merged_df.columns[1]  # Spalte B ermitteln (2. Spalte)
+    column_b = merged_df.columns[1]  # **Jetzt wird explizit Spalte B (Index 1) genommen**
 
     # Gruppiere nach Spalte B (Titel)
     grouped = merged_df.groupby(column_b)
@@ -115,22 +115,36 @@ if len(selected_sheets) >= 2:
     for title, group in grouped:
         unique_rows = group.drop_duplicates().reset_index(drop=True)
 
-        if len(unique_rows) == 1:
+        # Finde die gemeinsamen Spalten
+        common_columns = unique_rows.columns[2:]  # Ab Spalte 3
+
+        # Prüfe Übereinstimmungen Zelle für Zelle
+        row_styles = []
+        for col in common_columns:
+            if unique_rows[col].nunique() == 1:
+                row_styles.append(f"<td style='background-color: #90EE90;'>{unique_rows[col].values[0]}</td>")  # Grün
+            elif unique_rows[col].nunique() > 1:
+                row_styles.append(f"<td style='background-color: #FF4500; font-weight:bold;'>{unique_rows[col].values[0]}</td>")  # Rot
+            else:
+                row_styles.append(f"<td>{unique_rows[col].values[0]}</td>")  # Standard
+
+        # Bestimme das Gesamtergebnis (Grün = alles gleich, Orange = teilweise, Rot = alles unterschiedlich)
+        if all("background-color: #90EE90;" in s for s in row_styles):
             match_status = "✅"
             color = "green"
-        elif unique_rows.iloc[:, 2:].nunique().sum() == 0:
-            match_status = "🔴"
-            color = "red"
-        else:
+        elif any("background-color: #FF4500;" in s for s in row_styles):
             match_status = "🟠"
             color = "orange"
+        else:
+            match_status = "🔴"
+            color = "red"
 
-        comparison_results.append((match_status, title, unique_rows, color))
+        comparison_results.append((match_status, title, row_styles, color))
 
     # **Ergebnisse formatieren und anzeigen**
     styled_rows = []
-    for status, title, rows, color in comparison_results:
-        styled_row = f"<tr style='background-color: {color};'><td>{status}</td><td>{title}</td><td>{rows.to_html(index=False, escape=False)}</td></tr>"
+    for status, title, row_styles, color in comparison_results:
+        styled_row = f"<tr style='background-color: {color};'><td>{status}</td><td>{title}</td>{''.join(row_styles)}</tr>"
         styled_rows.append(styled_row)
 
     table_html = f"""
