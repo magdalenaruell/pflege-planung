@@ -145,20 +145,4 @@ try:
 except Exception as e:
     st.error(f"❌ Fehler beim Vergleich der Tabellenblätter: {str(e)}")
 
-# 📊 **Vergleichsmöglichkeit für alle ausgewählten Tabellenblätter**
-if selected_sheets:
-    st.subheader("📊 Wählen Sie die Spalten, die Sie vergleichen möchten")
-
-    all_columns = []
-    for sheet in selected_sheets:
-        all_columns.extend(sheets[sheet].columns)
-
-    all_columns = list(set(all_columns))
-
-    compare_options = st.multiselect("🔍 Spalten auswählen:", all_columns)
-
-    if compare_options:
-        st.subheader("📊 Vergleich der gewählten Spalten")
-        combined_data = pd.concat([sheets[sheet][compare_options] for sheet in selected_sheets], ignore_index=True)
-        st.dataframe(combined_data, use_container_width=True, height=600)
 
