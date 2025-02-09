@@ -62,13 +62,14 @@ st.write("📌 **Verfügbare Tabellenblätter:**")
 st.json(sheets_dict)  # Zeigt das Dictionary an
 
 # 📄 **Erstes Tabellenblatt auswählen**
-st.subheader("📄 Wählen Sie das erste Tabellenblatt aus")
-first_sheet_key = st.selectbox("🔍 Wählen Sie das erste Tabellenblatt:", list(sheets_dict.keys()), format_func=lambda x: sheets_dict[x])
-first_sheet_name = sheets_dict[first_sheet_key]
-df1 = pd.read_excel(xls, sheet_name=first_sheet_name)
+st.subheader("📄 Wählen Sie ein Tabellenblatt aus")
+selected_sheet_key = st.selectbox("🔍 Wählen Sie ein Tabellenblatt:", list(sheets_dict.keys()), format_func=lambda x: sheets_dict[x])
+selected_sheet_name = sheets_dict[selected_sheet_key]
+df = pd.read_excel(xls, sheet_name=selected_sheet_name)
 
-st.subheader(f"📄 Daten aus: {first_sheet_name}")
-st.dataframe(df1, use_container_width=True, height=400)
+st.subheader(f"📄 Daten aus: {selected_sheet_name}")
+st.dataframe(df, use_container_width=True, height=400)
+
 
 # 📄 **Zweites Tabellenblatt auswählen**
 st.subheader("📄 Wählen Sie das zweite Tabellenblatt aus")
