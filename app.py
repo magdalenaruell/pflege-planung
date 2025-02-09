@@ -22,6 +22,28 @@ st.markdown('</div>', unsafe_allow_html=True)
 # Titel der Anwendung
 st.title("MediMetrics")
 
+# 🦠 **Szenario Pandemie** (Schöner formatiert)
+st.markdown("""
+    <h3>🦠 Szenario: Pandemie</h3>
+    <p style="font-size:18px; line-height:1.6;">
+    Ein Krankenhaus erlebt eine massive Zunahme an Patienten aufgrund einer <b>hochansteckenden Atemwegserkrankung</b>, 
+    die sich zu einer <b>Pandemie</b> ausgeweitet hat. Bei manchen Patienten löst die Krankheit einen 
+    <span style="color:green;"><b>milden Verlauf</b></span> aus, bei anderen einen <span style="color:red;"><b>schwerwiegenden</b></span>.
+    </p>
+    
+    <p style="font-size:18px;">
+    Einige dieser Patienten benötigen <b>intensivmedizinische Betreuung</b>, während andere mit leichteren Symptomen isoliert werden müssen, 
+    um eine weitere Verbreitung der Krankheit zu verhindern. Gleichzeitig müssen weiterhin Patienten mit anderen Erkrankungen versorgt werden, 
+    wie <b>Unfallopfer, Herzinfarkt- oder Krebspatienten</b>, die ebenfalls auf lebenswichtige Behandlungen angewiesen sind.
+    </p>
+    
+    <p style="font-size:18px;">
+    Durch die Pandemie erhöht sich der Bedarf an Flächen der <b>Intensivmedizin (2.03)</b> und der <b>Isolationskrankenpflege (2.06)</b>. 
+    Um eine ausreichende Versorgung zu schaffen, müssen kurzfristig und übergangsweise neue Flächen zur Verfügung gestellt werden, 
+    die die Pflege von erkrankten Patienten sicherstellen. Dazu können kurzzeitig andere Flächen umgenutzt werden.
+    </p>
+    """, unsafe_allow_html=True)
+
 # 📂 Datei-Upload oder Fallback auf feste Datei
 uploaded_file = st.file_uploader("📂 Laden Sie eine Excel-Datei hoch oder verwenden Sie die Standarddatei", type=["xlsx"])
 file_path = "Allin13_WebAnwendung_250128_NBO_DIN.xlsx"  # Fallback-Datei
@@ -66,27 +88,7 @@ except Exception as e:
     st.error(f"❌ Fehler beim Laden der Excel-Datei: {str(e)}")
     st.stop()  # Programm an dieser Stelle beenden, falls ein Fehler auftritt
 
-# 🦠 **Szenario Pandemie** (Schöner formatiert)
-st.markdown("""
-    <h3>🦠 Szenario: Pandemie</h3>
-    <p style="font-size:18px; line-height:1.6;">
-    Ein Krankenhaus erlebt eine massive Zunahme an Patienten aufgrund einer <b>hochansteckenden Atemwegserkrankung</b>, 
-    die sich zu einer <b>Pandemie</b> ausgeweitet hat. Bei manchen Patienten löst die Krankheit einen 
-    <span style="color:green;"><b>milden Verlauf</b></span> aus, bei anderen einen <span style="color:red;"><b>schwerwiegenden</b></span>.
-    </p>
-    
-    <p style="font-size:18px;">
-    Einige dieser Patienten benötigen <b>intensivmedizinische Betreuung</b>, während andere mit leichteren Symptomen isoliert werden müssen, 
-    um eine weitere Verbreitung der Krankheit zu verhindern. Gleichzeitig müssen weiterhin Patienten mit anderen Erkrankungen versorgt werden, 
-    wie <b>Unfallopfer, Herzinfarkt- oder Krebspatienten</b>, die ebenfalls auf lebenswichtige Behandlungen angewiesen sind.
-    </p>
-    
-    <p style="font-size:18px;">
-    Durch die Pandemie erhöht sich der Bedarf an Flächen der <b>Intensivmedizin (2.03)</b> und der <b>Isolationskrankenpflege (2.06)</b>. 
-    Um eine ausreichende Versorgung zu schaffen, müssen kurzfristig und übergangsweise neue Flächen zur Verfügung gestellt werden, 
-    die die Pflege von erkrankten Patienten sicherstellen. Dazu können kurzzeitig andere Flächen umgenutzt werden.
-    </p>
-    """, unsafe_allow_html=True)
+
 
 # ✅ **Vergleich der Tabellenblätter mit einer Referenz (3 oder 6)**
 try:
