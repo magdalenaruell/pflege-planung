@@ -44,68 +44,58 @@ st.markdown("""
     </p>
     """, unsafe_allow_html=True)
 
-# 📂 Datei-Upload oder Fallback auf feste Datei
-uploaded_file = st.file_uploader("📂 Laden Sie eine Excel-Datei hoch oder verwenden Sie die Standarddatei", type=["xlsx"])
-file_path = "Allin13_WebAnwendung_250128_NBO_DIN.xlsx"  # Fallback-Datei
+# 📂 Standard-Excel-Datei laden (ohne Upload)
+file_path = "Allin13_WebAnwendung_250128_NBO_DIN.xlsx"  # Feste Datei
 
-if uploaded_file is not None:
-    xls = pd.ExcelFile(uploaded_file)
-    st.info("✅ Eigene hochgeladene Datei wird verwendet.")
-else:
-    try:
-        xls = pd.ExcelFile(file_path)
-        st.info(f"ℹ️ Keine Datei hochgeladen. Verwende die Standarddatei: {file_path}")
-    except Exception as e:
-        st.error(f"❌ Fehler beim Laden der Standarddatei: {str(e)}")
-        st.stop()
-
-# ✅ **Lese alle Tabellenblätter aus der gewählten Datei**
 try:
-    sheets = pd.read_excel(xls, sheet_name=None)  # `None` lädt alle Tabellenblätter
-    
-    if not sheets:
-        st.error("❌ Die Excel-Datei enthält keine Tabellenblätter.")
-        st.stop()
-    
-    # Zeige alle verfügbaren Tabellenblätter als Multi-Select
-    st.subheader("📄 Wählen Sie die in Ihrer Einrichtung vorhandenen Teilstellen aus")
-    
-    if "selected_sheets" not in st.session_state:
-        st.session_state.selected_sheets = []  
-    
-    selected_sheets = st.multiselect("🔍 Wählen Sie die Tabellenblätter:", list(sheets.keys()), default=st.session_state.selected_sheets)
-
-    st.session_state.selected_sheets = selected_sheets
-
-    # Zeige die Daten für die ausgewählten Tabellenblätter
-    if selected_sheets:
-        for sheet in selected_sheets:
-            df_filtered = sheets[sheet]  
-            st.subheader(f"📄 Alle Daten aus {sheet}")
-            st.dataframe(df_filtered, use_container_width=True, height=600)
-
+    xls = pd.ExcelFile(file_path)
+    sheets = xls.sheet_names  # Liste der vorhandenen Tabellenblätter
+    st.info(f"ℹ️ Standard-Excel-Datei geladen: {file_path}")
 except Exception as e:
-    st.error(f"❌ Fehler beim Laden der Excel-Datei: {str(e)}")
-    st.stop()  # Programm an dieser Stelle beenden, falls ein Fehler auftritt
+    st.error(f"❌ Fehler beim Laden der Standarddatei: {str(e)}")
+    st.stop()
 
+# 📄 **Tabellenblätter auswählen**
+st.subheader("📄 Wählen Sie die relevanten Tabellenblätter aus")
 
+if "selected_sheets" not in st.session_state:
+    st.session_state.selected_sheets = []
+
+selected_sheets = st.multiselect("🔍 Wählen Sie die Tabellenblätter:", sheets, default=st.session_state.selected_sheets)
+
+# Falls keine Auswahl getroffen wurde
+if not selected_sheets:
+    st.warning("⚠️ Bitte wählen Sie mindestens ein Tabellenblatt aus.")
+    st.stop()
+
+# Speichert die Auswahl für spätere Sitzungen
+st.session_state.selected_sheets = selected_sheets
+
+# ✅ **Nur die ausgewählten Tabellenblätter anzeigen**
+for sheet in selected_sheets:
+    try:
+        df_filtered = pd.read_excel(xls, sheet_name=sheet)
+        st.subheader(f"📄 Daten aus: {sheet}")
+        st.dataframe(df_filtered, use_container_width=True, height=600)
+    except Exception as e:
+        st.error(f"❌ Fehler beim Laden des Tabellenblatts '{sheet}': {str(e)}")
 
 # ✅ **Vergleich der Tabellenblätter mit einer Referenz (3 oder 6)**
 try:
-    if "3" in sheets.keys() and "6" in sheets.keys():
-        st.subheader("🔎 Wählen Sie ein Referenzteilstelle aus")
+    if "3" in sheets and "6" in sheets:
+        st.subheader("🔎 Wählen Sie eine Referenz-Teilstelle")
 
-        reference_sheet = st.selectbox("📌 Referenztabellenblatt wählen:", ["3", "6"])
+        reference_sheet = st.selectbox("📌 Referenz-Tabellenblatt wählen:", ["3", "6"])
 
         # Wähle ein Vergleichsblatt aus den bereits gewählten Tabellenblättern (ohne Referenz)
         available_comparison_sheets = [s for s in selected_sheets if s not in ["3", "6"]]
 
         if available_comparison_sheets:
-            compare_sheet = st.selectbox("📊 Wählen Sie ein Teilstelle für den Vergleich:", available_comparison_sheets)
+            compare_sheet = st.selectbox("📊 Wählen Sie eine Teilstelle für den Vergleich:", available_comparison_sheets)
 
             # Lade die beiden zu vergleichenden Tabellenblätter
-            df_reference = sheets[reference_sheet]
-            df_compare = sheets[compare_sheet]
+            df_reference = pd.read_excel(xls, sheet_name=reference_sheet)
+            df_compare = pd.read_excel(xls, sheet_name=compare_sheet)
 
             # ✅ **Zeige die beiden Tabellenblätter nebeneinander**
             st.subheader(f"📌 Vergleich zwischen **{reference_sheet}** (Referenz) und **{compare_sheet}**")
@@ -144,5 +134,4 @@ try:
             st.warning("⚠️ Kein weiteres Tabellenblatt ausgewählt, das mit der Referenz verglichen werden kann.")
 except Exception as e:
     st.error(f"❌ Fehler beim Vergleich der Tabellenblätter: {str(e)}")
-
 
