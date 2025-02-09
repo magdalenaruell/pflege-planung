@@ -85,3 +85,11 @@ if selected_file:
     # 📊 **Tabellenblatt auswählen**
     st.subheader("📄 Wähle ein Tabellenblatt")
     selected_sheet = st.selectbox("📄 Tabellenblatt:", sheet_names)
+
+
+    # 📊 **Daten aus dem gewählten Tabellenblatt anzeigen**
+    if selected_sheet:
+        df = pd.read_excel(xls, sheet_name=selected_sheet)
+        st.subheader(f"📊 Daten aus: {selected_sheet} in `{selected_file}`")
+        st.dataframe(df, use_container_width=True, height=500)
+
