@@ -69,7 +69,6 @@ if not selected_sheets:
     st.warning("⚠️ Bitte wählen Sie mindestens ein Tabellenblatt aus.")
     st.stop()
 
-
 # ✅ **Nur die ausgewählten Tabellenblätter anzeigen & Daten sammeln**
 dataframes = {}
 
@@ -85,8 +84,7 @@ for sheet, df in dataframes.items():
     st.subheader(f"📄 Daten aus: {sheet}")
     st.dataframe(df, use_container_width=True, height=400)  # **Zeigt nur ausgewählte Blätter!**
 
-
- 🔎 **Vergleich der Tabellenblätter auf Basis von Spalte B (2. Spalte)**
+# 🔎 **Vergleich der Tabellenblätter auf Basis von Spalte B (2. Spalte)**
 if len(selected_sheets) >= 2:
     st.subheader("📊 Vergleich der ausgewählten Tabellenblätter nach Spalte B")
 
@@ -144,7 +142,7 @@ if len(selected_sheets) >= 2:
     # **Ergebnisse formatieren und anzeigen**
     styled_rows = []
     for status, title, row_styles, color in comparison_results:
-        styled_row = f"<tr style='background-color: {color};'><td>{status}</td><td>{title}</td>{''.join(row_styles)}</tr>"
+        styled_row = f"<tr><td>{status}</td><td>{title}</td>{''.join(row_styles)}</tr>"
         styled_rows.append(styled_row)
 
     table_html = f"""
