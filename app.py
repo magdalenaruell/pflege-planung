@@ -1,6 +1,16 @@
 import streamlit as st
 import pandas as pd
 
+# 🏥 Titelbild zentriert anzeigen mit HTML & CSS
+st.markdown(
+    """
+    <div style="text-align: center;">
+        <img src="IMG_0728.PNG" style="width: 50%; max-width: 600px;">
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
+
 # Titel der Anwendung
 st.title("🏥 MediMetrics")
 
