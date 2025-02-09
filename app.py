@@ -77,7 +77,7 @@ for sheet in selected_sheets:
         df = pd.read_excel(xls, sheet_name=sheet)
         dataframes[sheet] = df
         st.subheader(f"📄 Daten aus: {sheet}")
-        st.dataframe(df, use_container_width=True, height=200)  # Höhe reduziert für bessere Übersicht
+        st.dataframe(df, use_container_width=True, height=400)  # Höhe reduziert für bessere Übersicht
     except Exception as e:
         st.error(f"❌ Fehler beim Laden des Tabellenblatts '{sheet}': {str(e)}")
 
@@ -93,7 +93,7 @@ if len(selected_sheets) >= 2:
             df["Tabelle"] = sheet  # Tabellenblatt-Name hinzufügen
             merged_data.append(df)
 
-    # Zusammenführen der Daten
+    # Zusammenführen der Daten (nur ausgewählte Blätter)
     merged_df = pd.concat(merged_data, ignore_index=True)
 
     # Sicherstellen, dass Spalte B existiert (2. Spalte, Index 1)
