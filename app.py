@@ -19,6 +19,9 @@ st.markdown('<div class="centered-image">', unsafe_allow_html=True)
 st.image("IMG_07283.PNG", width=300)  # Stelle sicher, dass das Bild im App-Ordner liegt
 st.markdown('</div>', unsafe_allow_html=True)
 
+# Titel der Anwendung
+st.title("MediMetrics")
+
 # 🦠 **Szenario Pandemie** (Schöner formatiert)
 st.markdown("""
     <h3>🦠 Szenario: Pandemie</h3>
