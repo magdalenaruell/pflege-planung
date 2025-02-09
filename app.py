@@ -44,7 +44,7 @@ st.markdown("""
     </p>
     """, unsafe_allow_html=True)
 
-# 📂 Standard-Excel-Datei laden (ohne Upload)
+# 📂 Standard-Excel-Datei laden
 file_path = "Allin13_WebAnwendung_250128_NBO_DIN.xlsx"
 
 try:
@@ -81,15 +81,30 @@ for sheet in selected_sheets:
     except Exception as e:
         st.error(f"❌ Fehler beim Laden des Tabellenblatts '{sheet}': {str(e)}")
 
-# ✅ **Vergleich der Tabellenblätter auf Basis von Spalte B**
+# 🔎 **Vergleich der Tabellenblätter auf Basis von Spalte B (2. Spalte)**
 if len(selected_sheets) >= 2:
-    st.subheader("📊 Vergleich der ausgewählten Tabellenblätter")
+    st.subheader("📊 Vergleich der ausgewählten Tabellenblätter nach Spalte B")
 
-    # Führe alle Tabellen zusammen basierend auf Spalte B
-    merged_df = pd.concat(dataframes.values(), keys=dataframes.keys(), names=["Tabelle", "Index"])
-    
-    # Gruppiere nach Spalte B (Titel) und überprüfe Übereinstimmungen
-    grouped = merged_df.groupby("B")
+    # Führe alle Tabellen zusammen basierend auf Spalte B (2. Spalte)
+    merged_data = []
+    for sheet, df in dataframes.items():
+        if df.shape[1] > 1:  # Sicherstellen, dass mindestens zwei Spalten existieren
+            df = df.iloc[:, :].copy()  # Kopie, um Änderungen zu vermeiden
+            df["Tabelle"] = sheet  # Tabellenblatt-Name hinzufügen
+            merged_data.append(df)
+
+    # Zusammenführen der Daten
+    merged_df = pd.concat(merged_data, ignore_index=True)
+
+    # Sicherstellen, dass Spalte B existiert (2. Spalte, Index 1)
+    if merged_df.shape[1] < 2:
+        st.error("❌ Spalte B nicht gefunden. Überprüfe das Excel-Dokument.")
+        st.stop()
+
+    column_b = merged_df.columns[1]  # Spalte B ermitteln (2. Spalte)
+
+    # Gruppiere nach Spalte B (Titel)
+    grouped = merged_df.groupby(column_b)
 
     comparison_results = []
     for title, group in grouped:
@@ -98,7 +113,7 @@ if len(selected_sheets) >= 2:
         if len(unique_rows) == 1:
             match_status = "✅"
             color = "green"
-        elif unique_rows.iloc[:, 1:].nunique().sum() == 0:
+        elif unique_rows.iloc[:, 2:].nunique().sum() == 0:
             match_status = "🔴"
             color = "red"
         else:
@@ -110,8 +125,7 @@ if len(selected_sheets) >= 2:
     # **Ergebnisse formatieren und anzeigen**
     styled_rows = []
     for status, title, rows, color in comparison_results:
-        rows_html = rows.to_html(index=False, escape=False)
-        styled_row = f"<tr style='background-color: {color};'><td>{status}</td><td>{title}</td><td>{rows_html}</td></tr>"
+        styled_row = f"<tr style='background-color: {color};'><td>{status}</td><td>{title}</td><td>{rows.to_html(index=False, escape=False)}</td></tr>"
         styled_rows.append(styled_row)
 
     table_html = f"""
