@@ -1,15 +1,23 @@
 import streamlit as st
 import pandas as pd
 
-# 🏥 Titelbild zentriert anzeigen mit HTML & CSS
+# 🏥 Titelbild laden und zentrieren
 st.markdown(
     """
-    <div style="text-align: center;">
-        <img src="IMG_0728.PNG" style="width: 50%; max-width: 600px;">
-    </div>
-    """, 
+    <style>
+    .centered-image {
+        display: flex;
+        justify-content: center;
+    }
+    </style>
+    """,
     unsafe_allow_html=True
 )
+
+# Bild zentriert mit `st.image()` laden
+st.markdown('<div class="centered-image">', unsafe_allow_html=True)
+st.image("IMG_0728.PNG", width=500)  # Stelle sicher, dass das Bild im App-Ordner liegt
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Titel der Anwendung
 st.title("MediMetrics")
