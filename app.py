@@ -56,66 +56,82 @@ except Exception as e:
     st.error(f"❌ Fehler beim Laden der Standarddatei: {str(e)}")
     st.stop()
 
-# 📄 **Tabellenblätter auswählen**
-st.subheader("📄 Wählen Sie die relevanten Tabellenblätter aus")
+# 📄 **Erstes Tabellenblatt auswählen**
+st.subheader("📄 Wählen Sie das erste Tabellenblatt aus")
+first_sheet = st.selectbox("🔍 Wählen Sie das erste Tabellenblatt:", sheet_names)
 
-selected_sheets = st.multiselect(
-    "🔍 Wählen Sie die Tabellenblätter:",
-    sheet_names,
-    default=[]
-)
+# ✅ **Erstes Tabellenblatt anzeigen**
+df1 = pd.read_excel(xls, sheet_name=first_sheet)
+st.subheader(f"📄 Daten aus: {first_sheet}")
+st.dataframe(df1, use_container_width=True, height=400)
 
-# Falls keine Auswahl getroffen wurde, Warnung anzeigen und stoppen
-if not selected_sheets:
-    st.warning("⚠️ Bitte wählen Sie mindestens ein Tabellenblatt aus.")
-    st.stop()
+# 📄 **Zweites Tabellenblatt auswählen**
+st.subheader("📄 Wählen Sie das zweite Tabellenblatt aus")
+second_sheet = st.selectbox("🔍 Wählen Sie das zweite Tabellenblatt:", sheet_names, index=1)
 
-# ✅ **Nur die ausgewählten Tabellenblätter EINZELN anzeigen**
-for sheet in selected_sheets:
-    try:
-        df = pd.read_excel(xls, sheet_name=sheet)
-        st.subheader(f"📄 Daten aus: {sheet}")  # **Nur das gewählte Tabellenblatt anzeigen**
-        st.dataframe(df, use_container_width=True, height=400)  # **Kein Mischen mit anderen Blättern**
-    except Exception as e:
-        st.error(f"❌ Fehler beim Laden des Tabellenblatts '{sheet}': {str(e)}")
+# ✅ **Zweites Tabellenblatt anzeigen**
+df2 = pd.read_excel(xls, sheet_name=second_sheet)
+st.subheader(f"📄 Daten aus: {second_sheet}")
+st.dataframe(df2, use_container_width=True, height=400)
 
-# 🔎 **Vergleich der Tabellenblätter auf Basis von Spalte B (2. Spalte)**
-if len(selected_sheets) >= 2:
-    st.subheader("📊 Vergleich der ausgewählten Tabellenblätter nach Spalte B")
+# 🔎 **Vergleich der Tabellenblätter auf Basis von Spalte B**
+if first_sheet and second_sheet:
+    st.subheader("📊 Vergleich der gewählten Tabellenblätter nach Spalte B")
+
+    # Sicherstellen, dass beide Tabellen mindestens zwei Spalten haben
+    if df1.shape[1] < 2 or df2.shape[1] < 2:
+        st.error("❌ Mindestens eine der Tabellen hat nicht genügend Spalten für den Vergleich.")
+        st.stop()
+
+    column_b = df1.columns[1]  # **Jetzt wird explizit Spalte B (Index 1) genommen**
+
+    # Gruppiere nach Spalte B (Titel)
+    df1_grouped = df1.set_index(column_b)
+    df2_grouped = df2.set_index(column_b)
+
+    common_titles = df1_grouped.index.intersection(df2_grouped.index)  # Gemeinsame Titel aus Spalte B
 
     comparison_results = []
-    
-    for sheet in selected_sheets:
-        try:
-            df = pd.read_excel(xls, sheet_name=sheet)
-            
-            # Falls Spalte B fehlt, stoppen
-            if df.shape[1] < 2:
-                st.error(f"❌ Spalte B fehlt in '{sheet}'. Überprüfen Sie das Tabellenblatt.")
-                continue
+    for title in common_titles:
+        row1 = df1_grouped.loc[title]
+        row2 = df2_grouped.loc[title]
 
-            column_b = df.columns[1]  # **Jetzt wird explizit Spalte B (Index 1) genommen**
-            grouped = df.groupby(column_b)
+        # Falls nur eine Zeile pro Titel vorhanden ist, setze es als DataFrame
+        if isinstance(row1, pd.Series):
+            row1 = row1.to_frame().T
+        if isinstance(row2, pd.Series):
+            row2 = row2.to_frame().T
 
-            for title, group in grouped:
-                unique_rows = group.drop_duplicates().reset_index(drop=True)
+        # Bereite den Vergleich vor
+        row_styles = []
+        for col in row1.columns:
+            if col not in row2.columns:
+                continue  # Falls Spalten nicht übereinstimmen, überspringen
 
-                # Prüfe Übereinstimmungen Zelle für Zelle
-                row_styles = []
-                for col in unique_rows.columns[2:]:  # Ab Spalte 3
-                    if unique_rows[col].nunique() == 1:
-                        row_styles.append(f"<td style='background-color: #90EE90;'>{unique_rows[col].values[0]}</td>")  # Grün
-                    elif unique_rows[col].nunique() > 1:
-                        row_styles.append(f"<td style='background-color: #FF4500; font-weight:bold;'>{unique_rows[col].values[0]}</td>")  # Rot
-                    else:
-                        row_styles.append(f"<td>{unique_rows[col].values[0]}</td>")  # Standard
+            val1 = row1[col].values[0]
+            val2 = row2[col].values[0]
 
-                match_status = "✅" if all("background-color: #90EE90;" in s for s in row_styles) else "🟠" if any("background-color: #FF4500;" in s for s in row_styles) else "🔴"
+            if pd.isna(val1) and pd.isna(val2):  # Beide sind NaN
+                row_styles.append(f"<td>{val1}</td>")
+            elif val1 == val2:  # Werte sind identisch
+                row_styles.append(f"<td style='background-color: #90EE90;'>{val1}</td>")  # Grün
+            elif val1 != val2:  # Werte sind unterschiedlich
+                row_styles.append(f"<td style='background-color: #FF4500; font-weight:bold;'>{val1} | {val2}</td>")  # Rot
+            else:
+                row_styles.append(f"<td>{val1}</td>")
 
-                comparison_results.append((match_status, title, row_styles))
+        # Bestimme das Gesamtergebnis für die Zeile (Grün = alles gleich, Orange = teilweise, Rot = alles unterschiedlich)
+        if all("background-color: #90EE90;" in s for s in row_styles):
+            match_status = "✅"
+            color = "green"
+        elif any("background-color: #FF4500;" in s for s in row_styles):
+            match_status = "🟠"
+            color = "orange"
+        else:
+            match_status = "🔴"
+            color = "red"
 
-        except Exception as e:
-            st.error(f"❌ Fehler beim Vergleich des Tabellenblatts '{sheet}': {str(e)}")
+        comparison_results.append((match_status, title, row_styles))
 
     # **Ergebnisse formatieren und anzeigen**
     if comparison_results:
