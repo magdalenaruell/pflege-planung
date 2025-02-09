@@ -1,40 +1,22 @@
 import streamlit as st
 import pandas as pd
 
-# 🎨 Anpassung mit CSS
+# 🏥 Titelbild laden und zentrieren
 st.markdown(
     """
     <style>
-    .centered {
+    .centered-image {
         display: flex;
         justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        text-align: center;
-    }
-    .logo {
-        width: 180px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        border-radius: 50%;
-    }
-    .title {
-        font-size: 48px;
-        font-weight: bold;
-        color: #333;
-    }
-    .text {
-        font-size: 18px;
-        line-height: 1.6;
-        color: #555;
     }
     </style>
-    """, unsafe_allow_html=True
+    """,
+    unsafe_allow_html=True
 )
 
-# 🎨 Logo + Titel-Design
-st.markdown('<div class="centered">', unsafe_allow_html=True)
-st.image("IMG_07283.PNG", width=180, use_column_width=False)  # Falls Bild hochgeladen wurde
-st.markdown('<h1 class="title">MediMetrics</h1>', unsafe_allow_html=True)
+# Bild zentriert mit `st.image()` laden
+st.markdown('<div class="centered-image">', unsafe_allow_html=True)
+st.image("IMG_07283.PNG", width=300)  # Stelle sicher, dass das Bild im App-Ordner liegt
 st.markdown('</div>', unsafe_allow_html=True)
 
 # 🦠 **Szenario Pandemie** (Schöner formatiert)
