@@ -16,7 +16,7 @@ st.markdown(
 
 # Bild zentriert mit `st.image()` laden
 st.markdown('<div class="centered-image">', unsafe_allow_html=True)
-st.image("IMG_0728.PNG", width=500)  # Stelle sicher, dass das Bild im App-Ordner liegt
+st.image("IMG_0728.PNG", width=250)  # Stelle sicher, dass das Bild im App-Ordner liegt
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Titel der Anwendung
