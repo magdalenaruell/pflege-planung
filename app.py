@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Titel der Anwendung
-st.title("🏥 Krankenhaus-Planungstabelle")
+st.title("🏥 MediMetrics")
 
 # 📂 Datei-Upload oder Fallback auf feste Datei
 uploaded_file = st.file_uploader("📂 Laden Sie eine Excel-Datei hoch oder verwenden Sie die Standarddatei", type=["xlsx"])
