@@ -45,45 +45,29 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 
-# 📂 **Excel-Datei laden**
-file_path = "Allin13_WebAnwendung_250128_NBO_DIN.xlsx"
+# 📂 **Excel-Dateien im Verzeichnis finden**
+def get_excel_files():
+    return [f for f in os.listdir() if f.endswith(".xlsx")]
 
-try:
-    xls = pd.ExcelFile(file_path)
-    sheet_names = xls.sheet_names
-    st.success(f"📄 Excel-Datei erfolgreich geladen: `{file_path}`")
-except Exception as e:
-    st.error(f"❌ Fehler beim Laden der Datei: {str(e)}")
+excel_files = get_excel_files()
+
+if not excel_files:
+    st.error("❌ Keine Excel-Dateien im Verzeichnis gefunden. Bitte eine Datei hochladen.")
     st.stop()
+
+# 📌 **Wähle eine Excel-Datei**
+st.subheader("📂 Wähle eine Excel-Datei")
+selected_file = st.selectbox("📑 Wähle eine Datei:", excel_files)
+
+if selected_file:
+    try:
+        xls = pd.ExcelFile(selected_file)
+        sheet_names = xls.sheet_names
+        st.success(f"📄 Excel-Datei erfolgreich geladen: `{selected_file}`")
+    except Exception as e:
+        st.error(f"❌ Fehler beim Laden der Datei: {str(e)}")
+        st.stop()
     
-xls = pd.ExcelFile("Allin13_WebAnwendung_250128_NBO_DIN.xlsx")
-print(xls.sheet_names)  # Gibt eine Liste der Tabellenblattnamen zurück
-
-# 📊 **Erstellung eines Dictionary mit Tabellenblatt-Namen**
-sheets_dict = {index: name for index, name in enumerate(sheet_names)}
-st.write("📌 **Verfügbare Tabellenblätter:**")
-st.json(sheets_dict)  # Zeigt das Dictionary an
-
-# 📄 **Tabellenblatt auswählen**
-st.subheader("📄 Wählen Sie ein Tabellenblatt aus")
-selected_sheet_key = st.selectbox("🔍 Wählen Sie ein Tabellenblatt:", list(sheet_dict.keys()), format_func=lambda x: sheet_dict[x], key="sheet_select")
-selected_sheet_name = sheet_dict[selected_sheet_key]
-
-# Daten anzeigen, aber nur für das aktuell ausgewählte Tabellenblatt
-if selected_sheet_name:
-    st.subheader(f"📄 Daten aus: {selected_sheet_name}")
-    df = pd.read_excel(xls, sheet_name=selected_sheet_name)
-    st.dataframe(df, use_container_width=True, height=400)
-
-
-# 📄 **Zweites Tabellenblatt auswählen**
-st.subheader("📄 Wählen Sie das zweite Tabellenblatt aus")
-second_sheet_key = st.selectbox("🔍 Wählen Sie das zweite Tabellenblatt:", list(sheets_dict.keys()), index=1, format_func=lambda x: sheets_dict[x])
-second_sheet_name = sheets_dict[second_sheet_key]
-df2 = pd.read_excel(xls, sheet_name=second_sheet_name)
-
-st.subheader(f"📄 Daten aus: {second_sheet_name}")
-st.dataframe(df2, use_container_width=True, height=400)
 
 # 🔎 **Vergleich der Tabellenblätter auf Basis von Spalte B**
 if not df1.empty and not df2.empty:
