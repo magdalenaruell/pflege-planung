@@ -77,7 +77,7 @@ for sheet in selected_sheets:
         df = pd.read_excel(xls, sheet_name=sheet)
         dataframes[sheet] = df
         st.subheader(f"📄 Daten aus: {sheet}")
-        st.dataframe(df, use_container_width=True, height=400)
+        st.dataframe(df, use_container_width=True, height=400)  # Höhe reduziert für bessere Übersicht
     except Exception as e:
         st.error(f"❌ Fehler beim Laden des Tabellenblatts '{sheet}': {str(e)}")
 
@@ -129,7 +129,7 @@ if len(selected_sheets) >= 2:
         styled_rows.append(styled_row)
 
     table_html = f"""
-    <table border='1' style='border-collapse: collapse; width: 100%; text-align: left;'>
+    <table class='compact-table'>
         <tr>
             <th>Vergleich</th>
             <th>Titel (Spalte B)</th>
