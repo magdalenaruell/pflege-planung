@@ -33,7 +33,7 @@ st.markdown(
 
 # 🎨 Logo + Titel-Design
 st.markdown('<div class="centered">', unsafe_allow_html=True)
-st.image("IMG_0728.PNG", width=180, use_column_width=False)  # Falls Bild hochgeladen wurde
+st.image("IMG_07283.PNG", width=180, use_column_width=False)  # Falls Bild hochgeladen wurde
 st.markdown('<h1 class="title">MediMetrics</h1>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
