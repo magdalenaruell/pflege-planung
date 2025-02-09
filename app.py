@@ -56,7 +56,7 @@ except Exception as e:
     st.error(f"❌ Fehler beim Laden der Datei: {str(e)}")
     st.stop()
     
-xls = pd.ExcelFile("datei.xlsx")
+xls = pd.ExcelFile("Allin13_WebAnwendung_250128_NBO_DIN.xlsx")
 print(xls.sheet_names)  # Gibt eine Liste der Tabellenblattnamen zurück
 
 # 📊 **Erstellung eines Dictionary mit Tabellenblatt-Namen**
