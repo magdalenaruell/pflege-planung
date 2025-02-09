@@ -45,34 +45,42 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 
-# 📂 Standard-Excel-Datei laden
+# 📂 **Excel-Datei laden**
 file_path = "Allin13_WebAnwendung_250128_NBO_DIN.xlsx"
 
 try:
     xls = pd.ExcelFile(file_path)
     sheet_names = xls.sheet_names
-    st.info(f"ℹ️ Standard-Excel-Datei geladen: {file_path}")
+    st.success(f"📄 Excel-Datei erfolgreich geladen: `{file_path}`")
 except Exception as e:
-    st.error(f"❌ Fehler beim Laden der Standarddatei: {str(e)}")
+    st.error(f"❌ Fehler beim Laden der Datei: {str(e)}")
     st.stop()
+
+# 📊 **Erstellung eines Dictionary mit Tabellenblatt-Namen**
+sheets_dict = {index: name for index, name in enumerate(sheet_names)}
+st.write("📌 **Verfügbare Tabellenblätter:**")
+st.json(sheets_dict)  # Zeigt das Dictionary an
 
 # 📄 **Erstes Tabellenblatt auswählen**
 st.subheader("📄 Wählen Sie das erste Tabellenblatt aus")
-first_sheet = st.selectbox("🔍 Wählen Sie das erste Tabellenblatt:", sheet_names)
+first_sheet_key = st.selectbox("🔍 Wählen Sie das erste Tabellenblatt:", list(sheets_dict.keys()), format_func=lambda x: sheets_dict[x])
 
 # ✅ **Erstes Tabellenblatt anzeigen**
-df1 = pd.read_excel(xls, sheet_name=first_sheet)
-st.subheader(f"📄 Daten aus: {first_sheet}")
+first_sheet_name = sheets_dict[first_sheet_key]
+df1 = pd.read_excel(xls, sheet_name=first_sheet_name)
+st.subheader(f"📄 Daten aus: {first_sheet_name}")
 st.dataframe(df1, use_container_width=True, height=400)
 
 # 📄 **Zweites Tabellenblatt auswählen**
 st.subheader("📄 Wählen Sie das zweite Tabellenblatt aus")
-second_sheet = st.selectbox("🔍 Wählen Sie das zweite Tabellenblatt:", sheet_names, index=1)
+second_sheet_key = st.selectbox("🔍 Wählen Sie das zweite Tabellenblatt:", list(sheets_dict.keys()), index=1, format_func=lambda x: sheets_dict[x])
 
 # ✅ **Zweites Tabellenblatt anzeigen**
-df2 = pd.read_excel(xls, sheet_name=second_sheet)
-st.subheader(f"📄 Daten aus: {second_sheet}")
+second_sheet_name = sheets_dict[second_sheet_key]
+df2 = pd.read_excel(xls, sheet_name=second_sheet_name)
+st.subheader(f"📄 Daten aus: {second_sheet_name}")
 st.dataframe(df2, use_container_width=True, height=400)
+
 
 # 🔎 **Vergleich der Tabellenblätter auf Basis von Spalte B**
 if first_sheet and second_sheet:
